@@ -61,7 +61,7 @@ def organize_fastqs(config):
         library_run_fastqs = config['fastq_paths']
         for lib in list(library_run_fastqs.keys()):
             if isinstance(library_run_fastqs[lib], list):
-                library_run_fastqs[lib] = {'lane1':library_run_fastqs[k]}
+                library_run_fastqs[lib] = {'lane1':library_run_fastqs[lib]}
 
         for lib in list(library_run_fastqs.keys()):
             for run in list(library_run_fastqs[lib].keys()):
@@ -69,8 +69,10 @@ def organize_fastqs(config):
                 if len(inputs) == 1 and inputs[0].startswith('sra:'):
                     srr, start, end = _parse_sra_url(inputs[0])
                     library_run_fastqs[lib][run] = [
-                        'downloaded_sra_fastqs/{srr}.{start}.{end}.1.fastq.gz',
-                        'downloaded_sra_fastqs/{srr}.{start}.{end}.2.fastq.gz']
+                        'downloaded_sra_fastqs/{}.{}.{}.1.fastq.gz'.format(
+                            srr, start, end),
+                        'downloaded_sra_fastqs/{}.{}.{}.2.fastq.gz'.format(
+                            srr, start, end)]
 
     else:
         raise Exception(

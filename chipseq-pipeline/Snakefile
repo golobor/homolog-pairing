@@ -1,8 +1,7 @@
 import glob
 import tempfile
 import pathlib
-from _common import needs_downloading, organize_fastqs
-
+from _common import organize_fastqs
 
 configfile: "config.yaml"
 
@@ -16,10 +15,13 @@ wildcard_constraints:
 
 rule default:
     input: 
-        ['tracks/{}__VS__{}.fc.signal.bw'.format(*eval(pair))
+        ['tracks/{}__VS__{}.fc.signal.bw'.format(*pair)
          for pair in config['treat_vs_control_pairs']]
 
 shell.prefix("set -euxo pipefail; ")
+for k,v in LIBRARY_RUN_FASTQS.items():
+    print(k)
+    print(v)
 
 ##############
 ## PIPELINE ##
@@ -36,11 +38,15 @@ rule download_sra:
         fastq2='downloaded_sra_fastqs/{srr}.{start}.{end}.2.fastq.gz',
     threads: 8
     run:
+        srr = params.srr
+        start = params.start
+        end = params.end
+
         shell(
             ('parallel-fastq-dump --origfmt --split-files --gzip '
              '-O downloaded_sra_fastqs -s {srr} -t {t}').format(srr=srr, t=threads)
-            + (' --minSpotId {}'.format(start) if start>0 else '')
-            + (' --maxSpotId {}'.format(end) if end>0 else '')
+            + (' --minSpotId {}'.format(start) if int(start)>0 else '')
+            + (' --maxSpotId {}'.format(end) if int(end)>0 else '')
             )
         shell('touch downloaded_sra_fastqs/{srr}_2.fastq.gz '.format(srr=srr))
         shell(
