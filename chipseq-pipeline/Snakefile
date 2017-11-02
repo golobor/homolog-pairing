@@ -1,10 +1,11 @@
 import glob
 import tempfile
 import pathlib
-from urllib.parse import urlparse
 from _common import needs_downloading, organize_fastqs
 
+
 configfile: "config.yaml"
+
 
 workdir: config['project_folder']
 
@@ -13,70 +14,51 @@ LIBRARY_RUN_FASTQS = organize_fastqs(config)
 wildcard_constraints:
     library = r'[A-Za-z0-9._-]+',
 
-
 rule default:
     input: 
         ['tracks/{}__VS__{}.fc.signal.bw'.format(*eval(pair))
          for pair in config['treat_vs_control_pairs']]
 
+shell.prefix("set -euxo pipefail; ")
 
 ##############
 ## PIPELINE ##
 ##############
 
 
-rule download_fastqs:
+rule download_sra:
     params:
-        library=lambda wc: wc.library,
-        run=lambda wc: wc.run,
+        srr=lambda wc: wc.srr,
+        start=lambda wc: wc.start,
+        end=lambda wc: wc.end,
     output:
-        fastq1='downloaded_fastqs/{library}.{run}.1.fastq.gz',
-        fastq2='downloaded_fastqs/{library}.{run}.2.fastq.gz',
+        fastq1='downloaded_sra_fastqs/{srr}.{start}.{end}.1.fastq.gz',
+        fastq2='downloaded_sra_fastqs/{srr}.{start}.{end}.2.fastq.gz',
     threads: 8
     run:
-        fastq_files = LIBRARY_RUN_FASTQS[params.library][params.run]
-        if (len(fastq_files) == 1) and (fastq_files[0].startswith('sra:')):
-            parsed = urlparse(fastq_files[0])
-            srr, query = parsed.path, parsed.query
-            start, end = 0, None
-            if query:
-                for kv_pair in query.split('&'):
-                    k,v = kv_pair.split('=')
-                    if k == 'start':
-                        start = v
-                    if k == 'end':
-                        end = v
-
-            shell(
-                ('parallel-fastq-dump --origfmt --split-files --gzip '
-                 '-O downloaded_fastqs -s {srr} -t {t}').format(srr=srr, t=threads)
-                + (' --minSpotId {}'.format(start) if start else '')
-                + (' --maxSpotId {}'.format(end) if end else '')
-                )
-            shell(
-                ('mv downloaded_fastqs/{srr}_1.fastq.gz '
-                 'downloaded_fastqs/{library}.{run}.1.fastq.gz').format(
-                     srr=srr, library=params.library, run=params.run))
-            shell('touch downloaded_fastqs/{srr}_2.fastq.gz '.format(srr=srr))
-            shell(
-                ('mv downloaded_fastqs/{srr}_2.fastq.gz '
-                 'downloaded_fastqs/{library}.{run}.2.fastq.gz').format(
-                     srr=srr, library=params.library, run=params.run))
+        shell(
+            ('parallel-fastq-dump --origfmt --split-files --gzip '
+             '-O downloaded_sra_fastqs -s {srr} -t {t}').format(srr=srr, t=threads)
+            + (' --minSpotId {}'.format(start) if start>0 else '')
+            + (' --maxSpotId {}'.format(end) if end>0 else '')
+            )
+        shell('touch downloaded_sra_fastqs/{srr}_2.fastq.gz '.format(srr=srr))
+        shell(
+            ('mv downloaded_sra_fastqs/{srr}_1.fastq.gz '
+            'downloaded_sra_fastqs/{srr}.{start}.{end}.1.fastq.gz '
+            ).format(srr=srr, start=start, end=end))
+        shell(
+            ('mv downloaded_sra_fastqs/{srr}_2.fastq.gz '
+            'downloaded_sra_fastqs/{srr}.{start}.{end}.2.fastq.gz '
+            ).format(srr=srr, start=start, end=end))
 
 
 rule align_sort:
     input:
-        fastq1=lambda wc: (
-            'downloaded_fastqs/{}.{}.1.fastq.gz'.format(wc.library, wc.run)
-            if needs_downloading(LIBRARY_RUN_FASTQS[wc.library][wc.run], 0)
-            else LIBRARY_RUN_FASTQS[wc.library][wc.run][0]),
-        fastq2=lambda wc: (
-            'downloaded_fastqs/{}.{}.2.fastq.gz'.format(wc.library, wc.run)
-            if needs_downloading(LIBRARY_RUN_FASTQS[wc.library][wc.run], 0)
-            else (
-                'downloaded_fastqs/{}.{}.1.fastq.gz'.format(wc.library, wc.run)
-                if len(LIBRARY_RUN_FASTQS[wc.library][wc.run]) < 2
-                  else LIBRARY_RUN_FASTQS[wc.library][wc.run][1])),
+        fastq1=lambda wc: (LIBRARY_RUN_FASTQS[wc.library][wc.run][0]),
+        fastq2=lambda wc: (LIBRARY_RUN_FASTQS[wc.library][wc.run][1] 
+                           if len(LIBRARY_RUN_FASTQS[wc.library][wc.run]) == 2
+                           else LIBRARY_RUN_FASTQS[wc.library][wc.run][0]),
 
         index_bwa=expand('{index}.{res}', 
                            index=config['genome']['bwa_index_basepath'],
@@ -92,7 +74,7 @@ rule align_sort:
         "benchmarks/align.{library}.{run}.tsv"
     threads: 20
     run: 
-        if os.path.getsize(input.fastq2) > 0:
+        if (input.fastq1 != input.fastq2) and os.path.getsize(input.fastq2) > 0:
             print('mapping paired-end reads from {}.{}'.format(
                 params.library, params.run))
             shell((

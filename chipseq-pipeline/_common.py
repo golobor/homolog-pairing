@@ -1,15 +1,4 @@
-
-def needs_downloading(fastq_files, side):
-    if len(fastq_files) == 1 and fastq_files[0].startswith('sra:'):
-        return True
-    elif (fastq_files[side].startswith('sra:') 
-        or fastq_files[side].startswith('http://') 
-        or fastq_files[side].startswith('ftp://')):
-        return True
-    else:
-        return False
-
-
+from urllib.parse import urlparse
 
 def parse_fastq_folder(root_folder_path):
     library_run_fastqs = {}
@@ -32,7 +21,7 @@ def parse_fastq_folder(root_folder_path):
     return library_run_fastqs
 
 
-def check_fastq_dict_structure(library_run_fastqs):
+def _check_fastq_dict_structure(library_run_fastqs):
     for library, run in library_run_fastqs.items():
         if isinstance(run, dict):
             for run, fastq_files in run.items():
@@ -46,20 +35,42 @@ def check_fastq_dict_structure(library_run_fastqs):
             return False
     return True
 
+def _parse_sra_url(sra_url):
+    parsed = urlparse(sra_url)
+    srr, query = parsed.path, parsed.query
+    start, end = 0, -1
+    if query:
+        for kv_pair in query.split('&'):
+            k,v = kv_pair.split('=')
+            if k == 'start':
+                start = v
+            if k == 'end':
+                end = v
+    return srr, start, end
 
 def organize_fastqs(config):
     if isinstance(config['fastq_paths'], str):
         library_run_fastqs = parse_fastq_folder(config['fastq_paths'])
     elif isinstance(config['fastq_paths'], dict):
-        if not check_fastq_dict_structure(config['fastq_paths']):
+        if not _check_fastq_dict_structure(config['fastq_paths']):
             raise Exception(
                 'An unknown format for library_fastqs! Please provide it as either '
                 'a path to the folder structured as "library/run/fastqs" or '
                 'a dictionary specifying the project structure.')
+        # fill place holder run names
         library_run_fastqs = config['fastq_paths']
-        for k in list(library_run_fastqs.keys()):
-            if isinstance(library_run_fastqs[k], list):
-                library_run_fastqs[k] = {'lane1':library_run_fastqs[k]}
+        for lib in list(library_run_fastqs.keys()):
+            if isinstance(library_run_fastqs[lib], list):
+                library_run_fastqs[lib] = {'lane1':library_run_fastqs[k]}
+
+        for lib in list(library_run_fastqs.keys()):
+            for run in list(library_run_fastqs[lib].keys()):
+                inputs = library_run_fastqs[lib][run]
+                if len(inputs) == 1 and inputs[0].startswith('sra:'):
+                    srr, start, end = _parse_sra_url(inputs[0])
+                    library_run_fastqs[lib][run] = [
+                        'downloaded_sra_fastqs/{srr}.{start}.{end}.1.fastq.gz',
+                        'downloaded_sra_fastqs/{srr}.{start}.{end}.2.fastq.gz']
 
     else:
         raise Exception(
@@ -68,3 +79,17 @@ def organize_fastqs(config):
             'a dictionary specifying the project structure.')
 
     return library_run_fastqs 
+
+
+def _needs_downloading(fastq_files):
+    if len(fastq_files) == 1 and fastq_files[0].startswith('sra:'):
+        return True
+    elif (fastq_files[side].startswith('sra:') 
+        or fastq_files[side].startswith('http://') 
+        or fastq_files[side].startswith('ftp://')):
+        return True
+    else:
+        return False
+
+
+
