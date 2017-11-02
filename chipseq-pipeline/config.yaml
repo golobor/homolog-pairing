@@ -1,0 +1,370 @@
+project_folder: 'results/' # either absolute or relative to the current working directory!
+
+run_spp_path: '/home/golobor/programming/phantompeakqualtools/run_spp.R'
+
+default_fragment_size: 100
+
+# The sample names and corresponding fastqs/GEO SRR accession numbers are 
+# provided via the fastq_path variable.
+# We group input files into the following hierarchy:
+# fastq_paths:
+#     - sample1:
+#         - run1:
+#             - 'path_to_fastq_side1'
+#             - 'path_to_fastq_side2'
+#         - run2:
+#             - 'path_to_fastq_side1'
+#             - 'path_to_fastq_side2'
+#     - sample2:
+#         - run1:
+#             - 'path_to_fastq_side1'
+#             - 'path_to_fastq_side2'
+#
+# The input fastq(.gz) files are provided as paths quoted with single quotes.
+#
+# This hierarchy allows us to group multiple sequenced files (== runs), 
+# corresponding to the same sample.
+# The run level of the heirarchy can be omitted if there was only one run in the 
+# sample:
+# fastq_paths:
+#     - sample1:
+#         - 'path_to_fastq_side1'
+#         - 'path_to_fastq_side2'
+#
+# In this case, the only run in the sample will be automatically called "lane1".
+#
+# For datasets sequenced in the single-sided mode, 
+# only one fastq file can be provided:
+#
+# fastq_paths:
+#     - sample1:
+#         - 'path_to_fastq_side1'
+#
+# Finally, datasets stored on GEO can be referenced via their SRR accession 
+# number prepended with 'sra:'
+# fastq_paths:
+#     - sample1:
+#         - 'sra:SRR123456'
+#
+# Only a subset of sequences can be requested using the following notation:
+# fastq_paths:
+#     - sample1:
+#         - 'sra:SRR123456?start=0&end=1000000'
+#
+fastq_paths:
+    CP190_woodCorces2011:
+        rep1:
+            - 'sra:SRR317176'
+    SuHw_woodCorces2011:
+        rep1:
+            - 'sra:SRR317179'
+    dCTCF_woodCorces2011:
+        rep1:
+            - 'sra:SRR317182'
+    BEAF32B_woodCorces2011:
+        rep1:
+            - 'sra:SRR317185'
+    input_woodCorces2011:
+        rep1:
+            - 'sra:SRR317188'
+        rep2:
+            - 'sra:SRR317189'
+
+
+    dTFIIIC220_vanbortleCorces2014:
+        rep1:
+            - 'sra:SRR1151097'
+        rep2:
+            - 'sra:SRR1151098'
+        rep3:
+            - 'sra:SRR1151099'
+    Cohesin_Rad21_vanbortleCorces2014:
+        - 'sra:SRR1151100'
+    Condensin_I_Barren_Interphase_vanbortleCorces2014:
+        - 'sra:SRR1151101'
+    Condensin_I_Barren_Asynchronous_vanbortleCorces2014:
+        - 'sra:SRR1151102'
+    Condensin_II_CAPH2_Interphase_vanbortleCorces2014:
+        - 'sra:SRR1151103'
+    Condensin_II_CAPH2_Asynchronous_vanbortleCorces2014:
+        - 'sra:SRR1151104'
+    Chromator_vanbortleCorces2014:
+        - 'sra:SRR1151105'
+    GAF_vanbortleCorces2014:
+        - 'sra:SRR1151106'
+    CP190_vanbortleCorces2014:
+        - 'sra:SRR1151107'
+    dTFIIIC220_dCTCF_RNAi_vanbortleCorces2014:
+        - 'sra:SRR1217606'
+    Cohesin_Rad21_dCTCF_RNAi_vanbortleCorces2014:
+        - 'sra:SRR1217607'
+    Condensin_II_CAPH2_dCTCF_RNAi_vanbortleCorces2014:
+        - 'sra:SRR1217608'
+    CP190_dCTCF_RNAi_vanbortleCorces2014:
+        - 'sra:SRR1217609'
+    Input_dCTCF_RNAi_vanbortleCorces2014:
+        - 'sra:SRR1217610'
+
+
+    BEAF_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636748'
+    BEAF_NT_liCorces2015:
+        rep2:
+            - 'sra:SRR1636749'
+    CapH2_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636750'
+        rep2:
+            - 'sra:SRR1636751'
+    CapH2_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636752'
+        rep2:
+            - 'sra:SRR1636753'
+    CBP_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636754'
+        rep2:
+            - 'sra:SRR1636755'
+    CBP_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636756'
+        rep2:
+            - 'sra:SRR1636757'
+        rep3:
+            - 'sra:SRR1636758'
+    Chromator_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636759'
+        rep2:
+            - 'sra:SRR1636760'
+    Chromator_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636761'
+        rep2:
+            - 'sra:SRR1636762'
+    CP190_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636763'
+        rep2:
+            - 'sra:SRR1636764'
+        rep3:
+            - 'sra:SRR1636765'
+    CP190_NT_liCorces2015:
+        rep2:
+            - 'sra:SRR1636766'
+    CTCF_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636767'
+        rep2:
+            - 'sra:SRR1636768'
+    CTCF_NT_liCorces2015:
+        rep2:
+            - 'sra:SRR1636769'
+    DREF_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636770'
+    DREF_NT_liCorces2015:
+        rep2:
+            - 'sra:SRR1636771'
+    Fs1h-L_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636772'
+    Fs1h-L_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636773'
+        rep2:
+            - 'sra:SRR1636774'
+    H3K4me1_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636775'
+        rep2:
+            - 'sra:SRR1636776'
+    H3K4me1_NT_liCorces2015:
+        rep2:
+            - 'sra:SRR1636777'
+    H3K4me3_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636778'
+        rep2:
+            - 'sra:SRR1636779'
+    H3K4me3_NT_liCorces2015:
+        rep2:
+            - 'sra:SRR1636780'
+    H3K9me2_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636781'
+    H3K9me2_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636782'
+    H3K27ac_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636783'
+    IgG_input_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636784'
+    IgG_input_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636785'
+        rep2:
+            - 'sra:SRR1636786'
+    L3mbt_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636787'
+    L3mbt_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636788'
+    Modmdg4_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636789'
+        rep2:
+            - 'sra:SRR1636790'
+    Pc_RJ_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636791'
+    Pc_RJ_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636792'
+    Pc_VP_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636793'
+    Rad21_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636794'
+    Rad21_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636795'
+        rep2:
+            - 'sra:SRR1636796'
+    Rad21_NT_liCorces2015:
+        rep3:
+            - 'sra:SRR1636797'
+    RNAPII_flavopiridol_liCorces2015:
+        rep1:
+            - 'sra:SRR1636798'
+    RNAPII_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636799'
+    RNAPII_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636800'
+    RNAPII_triptolide_liCorces2015:
+        rep1:
+            - 'sra:SRR1636801'
+    SuHw_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636802'
+    TFIIIC_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636803'
+        rep2:
+            - 'sra:SRR1636804'
+    TFIIIC_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636805'
+        rep2:
+            - 'sra:SRR1636806'
+    Z4_HS_liCorces2015:
+        rep1:
+            - 'sra:SRR1636807'
+    Z4_NT_liCorces2015:
+        rep1:
+            - 'sra:SRR1636808'
+
+    GAF_cubenaspottsCorces2017:
+        - 'sra:SRR3452729'
+    Histone3_cubenaspottsCorces2017:
+        - 'sra:SRR3452730'
+    H3K27me3_cubenaspottsCorces2017:
+        rep1:
+            - 'sra:SRR3452731'
+        rep2:
+            - 'sra:SRR3452732'
+    Ibf1_cubenaspottsCorces2017:
+        - 'sra:SRR3452733'
+    Ibf2_cubenaspottsCorces2017:
+        - 'sra:SRR3452734'
+    Pita_cubenaspottsCorces2017:
+        - 'sra:SRR3452735'
+    ZIPIC_cubenaspottsCorces2017:
+        - 'sra:SRR3452736'
+    Nup98_cubenaspottsCorces2017:
+        - 'sra:SRR3452737'
+
+
+
+treat_vs_control_pairs:
+    - ['CP190_woodCorces2011', 'input_woodCorces2011']
+    - ['SuHw_woodCorces2011', 'input_woodCorces2011']
+    - ['dCTCF_woodCorces2011', 'input_woodCorces2011']
+    - ['BEAF32B_woodCorces2011', 'input_woodCorces2011']
+
+    - ['dTFIIIC220_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+
+    - ['Cohesin_Rad21_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['Condensin_I_Barren_Interphase_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['Condensin_I_Barren_Asynchronous_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['Condensin_II_CAPH2_Interphase_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['Condensin_II_CAPH2_Asynchronous_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['Chromator_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['GAF_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['CP190_vanbortleCorces2014', 'IgG_input_NT_liCorces2015']
+    - ['dTFIIIC220_dCTCF_RNAi_vanbortleCorces2014', 'Input_dCTCF_RNAi_vanbortleCorces2014']
+    - ['Cohesin_Rad21_dCTCF_RNAi_vanbortleCorces2014', 'Input_dCTCF_RNAi_vanbortleCorces2014']
+    - ['Condensin_II_CAPH2_dCTCF_RNAi_vanbortleCorces2014', 'Input_dCTCF_RNAi_vanbortleCorces2014']
+    - ['CP190_dCTCF_RNAi_vanbortleCorces2014', 'Input_dCTCF_RNAi_vanbortleCorces2014']
+
+    - ['BEAF_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['CapH2_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['CapH2_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['CBP_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['CBP_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['Chromator_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['Chromator_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['CP190_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['CP190_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['CTCF_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['CTCF_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['DREF_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['Fs1h-L_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['Fs1h-L_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['H3K4me1_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['H3K4me1_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['H3K4me3_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['H3K4me3_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['H3K9me2_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['H3K9me2_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['H3K27ac_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['L3mbt_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['L3mbt_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['Modmdg4_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['Pc_RJ_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['Pc_RJ_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['Pc_VP_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['Rad21_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['Rad21_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['RNAPII_flavopiridol_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['RNAPII_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['RNAPII_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['RNAPII_triptolide_liCorces2015', 'IgG_input_NT_liCorces2015'] 
+    - ['SuHw_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['TFIIIC_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['TFIIIC_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+    - ['Z4_HS_liCorces2015', 'IgG_input_HS_liCorces2015']
+    - ['Z4_NT_liCorces2015', 'IgG_input_NT_liCorces2015']
+
+    - ['GAF_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+    - ['Histone3_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+    - ['H3K27me3_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+    - ['Ibf1_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+    - ['Ibf2_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+    - ['Pita_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+    - ['ZIPIC_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+    - ['Nup98_cubenaspottsCorces2017', 'IgG_input_NT_liCorces2015']
+
+genome:
+    assembly: 'dm3'
+    bwa_index_basepath: '/net/levsha/share/lab/genomes-bwa/dm3/dm3.fa.gz'
+    chrom_sizes_path: '/net/levsha/share/lab/genomes/dm3/dm3.chrom.sizes.rearragned'
+    

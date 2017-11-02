@@ -1,0 +1,444 @@
+import glob
+import tempfile
+import pathlib
+from urllib.parse import urlparse
+from _common import needs_downloading, organize_fastqs
+
+configfile: "config.yaml"
+
+workdir: config['project_folder']
+
+LIBRARY_RUN_FASTQS = organize_fastqs(config)
+
+wildcard_constraints:
+    library = r'[A-Za-z0-9._-]+',
+
+
+rule default:
+    input: 
+        ['tracks/{}__VS__{}.fc.signal.bw'.format(*eval(pair))
+         for pair in config['treat_vs_control_pairs']]
+
+
+##############
+## PIPELINE ##
+##############
+
+
+rule download_fastqs:
+    params:
+        library=lambda wc: wc.library,
+        run=lambda wc: wc.run,
+    output:
+        fastq1='downloaded_fastqs/{library}.{run}.1.fastq.gz',
+        fastq2='downloaded_fastqs/{library}.{run}.2.fastq.gz',
+    threads: 8
+    run:
+        fastq_files = LIBRARY_RUN_FASTQS[params.library][params.run]
+        if (len(fastq_files) == 1) and (fastq_files[0].startswith('sra:')):
+            parsed = urlparse(fastq_files[0])
+            srr, query = parsed.path, parsed.query
+            start, end = 0, None
+            if query:
+                for kv_pair in query.split('&'):
+                    k,v = kv_pair.split('=')
+                    if k == 'start':
+                        start = v
+                    if k == 'end':
+                        end = v
+
+            shell(
+                ('parallel-fastq-dump --origfmt --split-files --gzip '
+                 '-O downloaded_fastqs -s {srr} -t {t}').format(srr=srr, t=threads)
+                + (' --minSpotId {}'.format(start) if start else '')
+                + (' --maxSpotId {}'.format(end) if end else '')
+                )
+            shell(
+                ('mv downloaded_fastqs/{srr}_1.fastq.gz '
+                 'downloaded_fastqs/{library}.{run}.1.fastq.gz').format(
+                     srr=srr, library=params.library, run=params.run))
+            shell('touch downloaded_fastqs/{srr}_2.fastq.gz '.format(srr=srr))
+            shell(
+                ('mv downloaded_fastqs/{srr}_2.fastq.gz '
+                 'downloaded_fastqs/{library}.{run}.2.fastq.gz').format(
+                     srr=srr, library=params.library, run=params.run))
+
+
+rule align_sort:
+    input:
+        fastq1=lambda wc: (
+            'downloaded_fastqs/{}.{}.1.fastq.gz'.format(wc.library, wc.run)
+            if needs_downloading(LIBRARY_RUN_FASTQS[wc.library][wc.run], 0)
+            else LIBRARY_RUN_FASTQS[wc.library][wc.run][0]),
+        fastq2=lambda wc: (
+            'downloaded_fastqs/{}.{}.2.fastq.gz'.format(wc.library, wc.run)
+            if needs_downloading(LIBRARY_RUN_FASTQS[wc.library][wc.run], 0)
+            else (
+                'downloaded_fastqs/{}.{}.1.fastq.gz'.format(wc.library, wc.run)
+                if len(LIBRARY_RUN_FASTQS[wc.library][wc.run]) < 2
+                  else LIBRARY_RUN_FASTQS[wc.library][wc.run][1])),
+
+        index_bwa=expand('{index}.{res}', 
+                           index=config['genome']['bwa_index_basepath'],
+                           res=['amb', 'ann', 'bwt', 'pac', 'sa'])
+    output:
+        raw_srt="sam/runs/{library}.{run}.raw.srt.bam",
+        is_pairend="sam/runs/{library}.{run}.is_pairend",
+    params:
+        bwa_index_basepath=config['genome']['bwa_index_basepath'],
+        library=lambda wc: wc.library,
+        run=lambda wc: wc.run,
+    benchmark:
+        "benchmarks/align.{library}.{run}.tsv"
+    threads: 20
+    run: 
+        if os.path.getsize(input.fastq2) > 0:
+            print('mapping paired-end reads from {}.{}'.format(
+                params.library, params.run))
+            shell((
+                'bwa mem -t {threads} {params.bwa_index_basepath} '
+                '{input.fastq1} {input.fastq2} '
+                '| samtools sort -@ {threads} '
+                    '-T /tmp/{params.library}.{params.run} '
+                    '--output-fmt BAM -o {output.raw_srt}'
+                ).format(
+                    params=params, input=input, output=output, threads=threads))
+            shell('echo 1 > {output.is_pairend}')
+            
+        else:
+            print('mapping single-sided reads from {}.{}'.format(
+                params.library, params.run))
+            shell((
+                'bwa mem -t {threads} {params.bwa_index_basepath} '
+                '{input.fastq1} '
+                '| samtools sort -@ {threads} '
+                    '-T /tmp/{params.library}.{params.run} '
+                    '--output-fmt BAM -o {output.raw_srt}'
+                ).format(
+                    params=params, input=input, output=output, threads=threads))
+            shell('echo 0 > {output.is_pairend}')
+
+
+rule merge:
+    input:
+        bams = lambda wc: [
+            "sam/runs/{}.{}.raw.srt.bam".format(wc.library, run) 
+            for run in LIBRARY_RUN_FASTQS[wc.library]
+        ],
+        is_pairends = lambda wc: [
+            "sam/runs/{}.{}.is_pairend".format(wc.library, run) 
+            for run in LIBRARY_RUN_FASTQS[wc.library]
+        ],
+    output:
+        bam = "sam/{library}.raw.srt.bam",
+        is_pairend="sam/{library}.is_pairend",
+    params:
+        library = '{library}'
+    threads: 4
+    run:
+        is_pairends = [(pathlib.Path(p).read_text().strip() =='1')
+                       for p in input.is_pairends]
+        if all(is_pairends):
+            shell('echo 1 > {output.is_pairend}')
+        elif all([not i for i in is_pairends]):
+            shell('echo 0 > {output.is_pairend}')
+        else:
+            raise Exception(
+                'merging paired-end and single-end runs into one library')
+        if len(input.bams) > 1:
+            shell("samtools merge -@ {threads} -f {output.bam} {input.bams}")
+        else:
+            shell("mv {input.bams} {output.bam} ")
+
+
+rule filter_dedupe:
+    input:
+        bam="sam/{library}.raw.srt.bam",
+        is_pairend="sam/{library}.is_pairend",
+    output:
+        bam="sam/{library}.filt.nodup.srt.bam",
+        bai="sam/{library}.filt.nodup.srt.bam.bai",
+        flagstat="sam/{library}.filt.nodup.srt.flagstat.qc",
+        dup_file_qc='sam/{library}.dup.qc',
+        pbc_qc="sam/{library}.filt.nodup.srt.pbc.qc"
+    params:
+        library = '{library}',
+        mapq_thresh=30,
+        filt_bam_file = '/tmp/{library}.fltr.srt.bam',
+        tmp_filt_bam_file = '/tmp/{library}.markdup.bam'
+    threads: 4
+    log:
+        "filter.{library}.log"
+    run:
+        shell(
+            'samtools view -F 1804 -q {params.mapq_thresh} -b {input.bam} -o {params.filt_bam_file}'
+#            'samtools view -F 1804 -q {params.mapq_thresh} -b {input.bam} '
+#            '| samtools sort -@ {threads} -T /tmp/{params.library}.fltr.bam -o {params.filt_bam_file}'
+            )
+        
+        is_pairend = (pathlib.Path(input.is_pairend).read_text().strip() =='1')
+
+        if is_pairend:
+            shell('samtools rmdup --output-fmt BAM '
+                  '{params.filt_bam_file} {output.bam} 2> {output.dup_file_qc}')
+        else:
+            shell('samtools rmdup --output-fmt BAM -s '
+                  '{params.filt_bam_file} {output.bam} 2> {output.dup_file_qc}')
+
+        # Index Final BAM file
+        shell('samtools index -@ {threads} {output.bam}')
+        shell('samtools flagstat {output.bam} > {output.flagstat}')
+
+        # TotalReadPairs [tab] DistinctReadPairs [tab] OneReadPair [tab] TwoReadPairs [tab] NRF=Distinct/Total [tab] PBC1=OnePair/Distinct [tab] PBC2=OnePair/TwoPair
+        shell(
+        """bedtools bamtobed -i {params.filt_bam_file} \
+            | awk 'BEGIN{{OFS="\t"}}{{print $1,$2,$3,$6}}' \
+            | grep -v 'chrM' | sort | uniq -c \
+            | awk 'BEGIN{{mt=0;m0=0;m1=0;m2=0}} ($1==1){{m1=m1+1}} ($1==2){{m2=m2+1}} {{m0=m0+1}} {{mt=mt+$1}} END{{printf "%d\\t%d\\t%d\\t%d\\t%f\\t%f\\t%f\\n",mt,m0,m1,m2,m0/mt,m1/m0,m1/m2}}' \
+            > {output.pbc_qc}
+        rm {params.filt_bam_file}
+        """)
+
+rule cross_corr:
+    input:
+        bam="sam/{library}.filt.nodup.srt.bam",
+        is_pairend="sam/{library}.is_pairend",
+    output:
+        cc_qc = "sam/{library}.filt.nodup.srt.cc.qc",
+        pdf = "sam/{library}.filt.nodup.srt.cc.plot.pdf"
+    log: "logs/cc.{library}.log"
+    threads : 8
+    run:
+        is_pairend = (pathlib.Path(input.is_pairend).read_text().strip() =='1')
+        if is_pairend:
+            shell(
+            """ 
+            touch {output.pdf}
+            touch {output.cc_qc} 
+            """
+            )
+        else:
+            shell(
+            """ 
+            Rscript {config[run_spp_path]} -c={input.bam} -p={threads} \
+                -filtchr=chrM -savp={output.pdf} -out={output.cc_qc} 
+            """
+            )
+
+
+        #sed -r 's/,[^\t]+//g' {CC_SCORES_FILE} > temp
+
+        # Pre-req: phantompeakqualtools R package
+        # https://github.com/kundajelab/phantompeakqualtools/
+        #
+        # CC_SCORE file format
+        # format: Filename<tab>numReads<tab>estFragLen<tab>corr_estFragLen<tab>PhantomPeak<tab>corr_phantomPeak<tab>argmin_corr<tab>min_corr<tab>phantomPeakCoef<tab>relPhantomPeakCoef<tab>QualityTag
+        # Normalized strand cross-correlation coefficient (NSC) = col9 in outFile
+        # Relative strand cross-correlation coefficient (RSC) = col10 in outFile
+        # *** Estimated fragment length = col3 in outFile, take the top value ***
+        # Important columns highlighted, but all/whole file can be stored for display
+
+
+rule peak_call:
+    input:
+        treat_bam = "sam/{treat}.filt.nodup.srt.bam",
+        treat_is_pairend="sam/{treat}.is_pairend",
+        control_bam = "sam/{control}.filt.nodup.srt.bam",
+        control_is_pairend="sam/{control}.is_pairend",
+        cc_qc = "sam/{treat}.filt.nodup.srt.cc.qc",
+        chrom_sizes=config['genome']['chrom_sizes_path'],
+    output:
+        temp("tracks/{treat}__VS__{control}.treat_pileup.bdg"),
+        temp("tracks/{treat}__VS__{control}.control_lambda.bdg"),
+        "peaks/{treat}__VS__{control}.broadPeak.gz",
+        "peaks/{treat}__VS__{control}.narrowPeak.gz",
+        "peaks/{treat}__VS__{control}.gappedPeak.gz"
+    log: 
+        "logs/peakcall.{treat}.{control}.log"
+    params:
+        out_peak_prefix  = "peaks/{treat}__VS__{control}",
+        out_track_prefix = "tracks/{treat}__VS__{control}",
+
+    run:
+        genome_size = sum(int(l.strip().split('\t')[1])
+                           for l in open(input.chrom_sizes)
+                           if l.strip()
+                          )
+        treat_is_pairend = (
+            pathlib.Path(input.treat_is_pairend).read_text().strip() =='1')
+        control_is_pairend = (
+            pathlib.Path(input.control_is_pairend).read_text().strip() =='1')
+
+        if treat_is_pairend and control_is_pairend:
+            shell("""
+            # Generate Narrow peaks and pileup tracks.
+            # NOTE: '--bdg --SPMR' saves extended fragment pile up and local lambda
+            # into bedgraph files, using signal per M reads.
+            macs2 callpeak -t {input.treat_bam} -c {input.control_bam} -f BAMPE \
+                -n {params.out_peak_prefix}  -g {genome_size} -p 1e-2 \
+                --nomodel --shift 0 --keep-dup all --bdg --SPMR
+
+            # Generate Broad and Gapped Peaks
+            macs2 callpeak -t {input.treat_bam} -c {input.control_bam} -f BAMPE \
+                -n {params.out_peak_prefix}  -g {genome_size} -p 1e-2 \
+                --broad --nomodel --shift 0 --keep-dup all
+
+            """.format(input=input, params=params, 
+                       genome_size=genome_size)
+            )
+                       
+
+        elif (not treat_is_pairend) and (not control_is_pairend):
+            cc_qc = pathlib.Path(input.cc_qc).read_text().strip().split('\t')
+            cc_qual = int(cc_qc[-1])
+            if cc_qual >= 0:
+                frag_size = cc_qc[2].split(',')[0]
+            else:
+                frag_size = config['default_fragment_size']
+
+            shell("""
+            # Generate Narrow peaks and pileup tracks.
+            # NOTE: '--bdg --SPMR' saves extended fragment pile up and local lambda
+            # into bedgraph files, using signal per M reads.
+            macs2 callpeak -t {input.treat_bam} -c {input.control_bam} -f BAM \
+                -n {params.out_peak_prefix}  -g {genome_size} -p 1e-2 \
+                --nomodel --extsize {frag_size} --shift 0 --keep-dup all --bdg --SPMR
+
+            # Generate Broad and Gapped Peaks
+            macs2 callpeak -t {input.treat_bam} -c {input.control_bam} -f BAM \
+                -n {params.out_peak_prefix}  -g {genome_size} -p 1e-2 \
+                --broad --nomodel --extsize {frag_size} --shift 0 --keep-dup all
+
+            """.format(input=input, params=params, 
+                       genome_size=genome_size,
+                       frag_size=frag_size)
+            )
+        else:
+            raise Exception(
+                'Both treatment and control ChIP-Seq experiments must be either '
+                'single-end or paired-end sequenced, mixing is not allowed.'
+            )
+
+        shell("""
+        # Clean up pileup tracks
+        LC_COLLATE=C sort -k1,1 -k2,2n {params.out_peak_prefix}_treat_pileup.bdg \
+            > {params.out_track_prefix}.treat_pileup.bdg
+        rm -f {params.out_peak_prefix}_treat_pileup.bdg 
+
+        LC_COLLATE=C sort -k1,1 -k2,2n {params.out_peak_prefix}_control_lambda.bdg \
+            > {params.out_track_prefix}.control_lambda.bdg
+        rm -f {params.out_peak_prefix}_control_lambda.bdg 
+
+        # Clean up narrow peaks
+        sort -k 8gr,8gr {params.out_peak_prefix}_peaks.narrowPeak \
+             | awk '{awkscript}' \
+             | gzip -c > {params.out_peak_prefix}.narrowPeak.gz
+
+        # Remove additional files
+        rm -f {params.out_peak_prefix}_peaks.xls \
+            {params.out_peak_prefix}_peaks.narrowPeak \
+            {params.out_peak_prefix}_summits.bed
+
+
+        # Clean up broad and gapped peaks
+        # Sort by Col8 (for broadPeak) or Col 14(for gappedPeak) in descending
+        # order and replace long peak names in Column 4 with Peak_<peakRank>
+        sort -k 8gr,8gr {params.out_peak_prefix}_peaks.broadPeak \
+            | awk '{awkscript}' \
+            | gzip -c > {params.out_peak_prefix}.broadPeak.gz
+        sort -k 14gr,14gr {params.out_peak_prefix}_peaks.gappedPeak \
+            | awk '{awkscript}' \
+            | gzip -c > {params.out_peak_prefix}.gappedPeak.gz
+
+        # Remove additional files
+        rm -f {params.out_peak_prefix}_peaks.xls \
+            {params.out_peak_prefix}_peaks.broadPeak \
+            {params.out_peak_prefix}_peaks.gappedPeak \
+            {params.out_peak_prefix}_summits.bed
+        """.format(input=input, params=params, 
+                   awkscript="""BEGIN{{OFS="\\t"}}{{$4="Peak_"NR ; print $0}}""")
+        )
+
+
+
+rule signal_track:
+    input:
+        chrom_sizes=config['genome']['chrom_sizes_path'],
+        treat_track_bdg = "tracks/{treat}__VS__{control}.treat_pileup.bdg",
+        control_track_bdg = "tracks/{treat}__VS__{control}.control_lambda.bdg"
+    output:
+        treat_bw="tracks/{treat}__VS__{control}.treat_pileup.bw",
+        control_bw="tracks/{treat}__VS__{control}.control_lambda.bw",
+        fc_bw='tracks/{treat}__VS__{control}.fc.signal.bw'
+    log:
+        "logs/signaltrack.{treat}.{control}.log"
+    shell:
+        """
+        macs2 bdgcmp -t {input.treat_track_bdg} -c {input.control_track_bdg} \
+            -o {output.fc_bw}.FE.bdg -m FE
+
+        bedGraphToBigWig {input.treat_track_bdg} {input.chrom_sizes} {output.treat_bw}
+        bedGraphToBigWig {input.control_track_bdg} {input.chrom_sizes} {output.control_bw}
+
+        # Remove coordinates outside chromosome sizes (stupid MACS2 bug)
+        bedtools slop -i {output.fc_bw}.FE.bdg -g {input.chrom_sizes} -b 0 \
+            | awk '{{if ($3 != -1) print $0}}' \
+            | bedClip stdin {input.chrom_sizes} {output.fc_bw}.bdg
+        rm -f {output.fc_bw}.FE.bdg
+
+        # Bigwig needs sorted input with case-sensitive (i.e. byte) sort of chroms
+        LC_COLLATE=C sort -k1,1 -k2,2n {output.fc_bw}.bdg > {output.fc_bw}.sort.bdg
+
+        # Convert bedgraph to bigwig
+        bedGraphToBigWig {output.fc_bw}.sort.bdg {input.chrom_sizes} {output.fc_bw}
+        rm -f {output.fc_bw}.bdg
+        rm -f {output.fc_bw}.sort.bdg
+        """
+
+
+#rule filter_dedupe:
+#    input:
+#        "sam/{library}.raw.srt.bam"
+#    output:
+#        bam="sam/{library}.filt.nodup.srt.bam",
+#        bai="sam/{library}.filt.nodup.srt.bam.bai",
+#        flagstat="sam/{library}.filt.nodup.srt.flagstat.qc",
+#        dup_file_qc='sam/{library}.dup.qc',
+#        pbc_qc="sam/{library}.filt.nodup.srt.pbc.qc"
+#    params:
+#        library = '{library}',
+#        mapq_thresh=30,
+#        filt_bam_file = '/tmp/{library}.fltr.bam',
+#        tmp_filt_bam_file = '/tmp/{library}.markdup.bam'
+#    log:
+#        "filter.{library}.log"
+#    shell:
+#        """
+#
+#        samtools view -F 1804 -q {params.mapq_thresh} -b {input} | samtools sort -@ 4 -T /tmp/{params.library}.fltr.bam -o {params.filt_bam_file}
+#        picard MarkDuplicates \
+#            INPUT={params.filt_bam_file} \
+#            OUTPUT={params.tmp_filt_bam_file} METRICS_FILE={output.dup_file_qc} \
+#            VALIDATION_STRINGENCY=LENIENT ASSUME_SORTED=true \
+#            TAGGING_POLICY=All \
+#            REMOVE_DUPLICATES=false
+#        mv {params.tmp_filt_bam_file} {params.filt_bam_file}
+#
+#        samtools view -F 1804 -b {params.filt_bam_file} > {output.bam}
+#
+#        # Index Final BAM file
+#        samtools index {output.bam} 
+#        samtools flagstat {output.bam} > {output.flagstat}
+#
+#        # TotalReadPairs [tab] DistinctReadPairs [tab] OneReadPair [tab] TwoReadPairs [tab] NRF=Distinct/Total [tab] PBC1=OnePair/Distinct [tab] PBC2=OnePair/TwoPair
+#        bedtools bamtobed -i {params.filt_bam_file} \
+#            | awk 'BEGIN{{OFS="\t"}}{{print $1,$2,$3,$6}}' \
+#            | grep -v 'chrM' | sort | uniq -c \
+#            | awk 'BEGIN{{mt=0;m0=0;m1=0;m2=0}} ($1==1){{m1=m1+1}} ($1==2){{m2=m2+1}} {{m0=m0+1}} {{mt=mt+$1}} END{{printf "%d\\t%d\\t%d\\t%d\\t%f\\t%f\\t%f\\n",mt,m0,m1,m2,m0/mt,m1/m0,m1/m2}}' \
+#            > {output.pbc_qc}
+#        rm {params.filt_bam_file}
+#
+#        """
+#
+
+
