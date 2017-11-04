@@ -566,7 +566,7 @@ treat_vs_control_pairs:
     - ['ChIP__HDAC-499_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
     - ['ChIP__HDAC-500_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
     - ['ChIP__HDAC-501_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
-    - ['ChIP__7T_cad_E0-4h__Embryo__NegreWhite2011', '7T_cad_INPUT_E0-4h_rep1__Embryo__NegreWhite2011, 7T_cad_INPUT_E0-4h_rep2__Embryo__NegreWhite2011']
+    - ['ChIP__7T_cad_E0-4h__Embryo__NegreWhite2011', 'ChIP__7T_cad_INPUT_E0-4h__Embryo__NegreWhite2011']
 
 
 
