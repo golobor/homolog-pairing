@@ -172,60 +172,74 @@ fastq_paths:
         rep1:
             - 'sra:SRR1508424'
     ChIP__WT_NC12-pSer5__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638749'
+        rep1_lane2:
             - 'sra:SRR1638750'
     ChIP__WT_NC12-input__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638751'
+        rep1_lane2:
             - 'sra:SRR1638752'
     ChIP__WT_NC13-pSer5__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638754'
+        rep1_lane2:
             - 'sra:SRR1638755'
     ChIP__WT_NC13-input__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638758'
+        rep1_lane2:
             - 'sra:SRR1638759'
     ChIP__WT_NC14E-pSer5__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638760'
+        rep1_lane2:
             - 'sra:SRR1638761'
     ChIP__WT_NC14E-input__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638762'
+        rep1_lane2:
             - 'sra:SRR1638763'
     ChIP__WT_NC14M-pSer5__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638764'
+        rep1_lane2:
             - 'sra:SRR1638765'
     ChIP__WT_NC14M-input__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638766'
+        rep1_lane2:
             - 'sra:SRR1638767'
     ChIP__WT_NC14L-pSer5__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638768'
+        rep1_lane2:
             - 'sra:SRR1638769'
     ChIP__WT_NC14L-input__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638770'
+        rep1_lane2:
             - 'sra:SRR1638771'
     ChIP__mei-41_NC13-pSer5__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638772'
+        rep1_lane2:
             - 'sra:SRR1638773'
     ChIP__mei-41_NC13-IgG__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638774'
+        rep1_lane2:
             - 'sra:SRR1638775'
     ChIP__zld_NC13-pSer5__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638776'
+        rep1_lane2:
             - 'sra:SRR1638777'
     ChIP__zld_NC13-input__Embryo__BlytheWieschaus2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1638780'
+        rep1_lane2:
             - 'sra:SRR1638781'
     ChIP__2-3h_wt_Zld__Embryo__SunRushlow2015:
         rep1:
