@@ -63,8 +63,9 @@ fastq_paths:
         rep1:
             - 'sra:SRR314831'
     ChIP__H3K27ac_cycle_8__Embryo__LiEisen2014:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1505710'
+        rep1_lane2:
             - 'sra:SRR1505711'
     ChIP__H3K27ac_cycle_12__Embryo__LiEisen2014:
         rep1:
