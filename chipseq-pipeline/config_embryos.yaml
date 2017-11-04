@@ -1,0 +1,562 @@
+project_folder: 'embryos/' # either absolute or relative to the current working directory!
+
+run_spp_path: '/home/golobor/programming/phantompeakqualtools/run_spp.R'
+
+default_fragment_size: 100
+
+# The sample names and corresponding fastqs/GEO SRR accession numbers are 
+# provided via the fastq_path variable.
+# We group input files into the following hierarchy:
+# fastq_paths:
+#     - sample1:
+#         - run1:
+#             - 'path_to_fastq_side1'
+#             - 'path_to_fastq_side2'
+#         - run2:
+#             - 'path_to_fastq_side1'
+#             - 'path_to_fastq_side2'
+#     - sample2:
+#         - run1:
+#             - 'path_to_fastq_side1'
+#             - 'path_to_fastq_side2'
+#
+# The input fastq(.gz) files are provided as paths quoted with single quotes.
+#
+# This hierarchy allows us to group multiple sequenced files (== runs), 
+# corresponding to the same sample.
+# The run level of the heirarchy can be omitted if there was only one run in the 
+# sample:
+# fastq_paths:
+#     - sample1:
+#         - 'path_to_fastq_side1'
+#         - 'path_to_fastq_side2'
+#
+# In this case, the only run in the sample will be automatically called "lane1".
+#
+# For datasets sequenced in the single-sided mode, 
+# only one fastq file can be provided:
+#
+# fastq_paths:
+#     - sample1:
+#         - 'path_to_fastq_side1'
+#
+# Finally, datasets stored on GEO can be referenced via their SRR accession 
+# number prepended with 'sra:'
+# fastq_paths:
+#     - sample1:
+#         - 'sra:SRR123456'
+#
+# Only a subset of sequences can be requested using the following notation:
+# fastq_paths:
+#     - sample1:
+#         - 'sra:SRR123456?start=0&end=1000000'
+#
+fastq_paths:
+
+    ChIP__ZLD_cycle_8__Embryo__HarrisonEisen2011:
+        rep1:
+            - 'sra:SRR314829'
+    ChIP__ZLD_cycle_13__Embryo__HarrisonEisen2011:
+        rep1:
+            - 'sra:SRR314830'
+    ChIP__ZLD_cycle_14__Embryo__HarrisonEisen2011:
+        rep1:
+            - 'sra:SRR314831'
+    ChIP__H3K27ac_cycle_8__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505710'
+            - 'sra:SRR1505711'
+    ChIP__H3K27ac_cycle_12__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505712'
+    ChIP__H3K27ac_cycle_14a__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505713'
+    ChIP__H3K27ac_cycle_14c__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505714'
+    ChIP__H3K4me1_cycle_8__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505715'
+    ChIP__H3K4me1_cycle_12__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505716'
+    ChIP__H3K4me1_cycle_14a__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505717'
+    ChIP__H3K4me1_cycle_14c__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505718'
+    ChIP__H3K4me3_cycle_8__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505719'
+    ChIP__H3K4me3_cycle_12__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505720'
+    ChIP__H3K4me3_cycle_14a__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505721'
+    ChIP__H3K4me3_cycle_14c__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505722'
+    ChIP__H3K9ac_cycle_8__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505723'
+    ChIP__H3K9ac_cycle_12__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505724'
+    ChIP__H3K9ac_cycle_14a__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505725'
+    ChIP__H3K9ac_cycle_14c__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505726'
+    ChIP__H3K27me3_cycle_12__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505727'
+    ChIP__H3K27me3_cycle_14a__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505728'
+    ChIP__H3K27me3_cycle_14c__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505729'
+    ChIP__H3K36me3_cycle_12__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505730'
+    ChIP__H3K36me3_cycle_14a__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505731'
+    ChIP__H3K36me3_cycle_14c__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505732'
+    ChIP__H3_cycle_8__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505733'
+    ChIP__H3_cycle_12__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505734'
+    ChIP__H3_cycle_14a__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505735'
+    ChIP__H3_cycle_14c__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505736'
+    ChIP__cycle_8_input__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505737'
+    ChIP__cycle_12_input__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505738'
+    ChIP__cycle_14a_input__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505739'
+    ChIP__cycle_14c_input__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1505740'
+    ChIP__Zelda_WT__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1508419'
+    ChIP__Zelda_dZld__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1508420'
+    ChIP__H3_WT__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1508421'
+    ChIP__H3_dZld__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1508422'
+    ChIP__H3K4me1_WT__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1508423'
+    ChIP__H3K4me1_dZld__Embryo__LiEisen2014:
+        rep1:
+            - 'sra:SRR1508424'
+    ChIP__WT_NC12-pSer5__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638749'
+            - 'sra:SRR1638750'
+    ChIP__WT_NC12-input__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638751'
+            - 'sra:SRR1638752'
+    ChIP__WT_NC13-pSer5__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638754'
+            - 'sra:SRR1638755'
+    ChIP__WT_NC13-input__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638758'
+            - 'sra:SRR1638759'
+    ChIP__WT_NC14E-pSer5__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638760'
+            - 'sra:SRR1638761'
+    ChIP__WT_NC14E-input__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638762'
+            - 'sra:SRR1638763'
+    ChIP__WT_NC14M-pSer5__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638764'
+            - 'sra:SRR1638765'
+    ChIP__WT_NC14M-input__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638766'
+            - 'sra:SRR1638767'
+    ChIP__WT_NC14L-pSer5__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638768'
+            - 'sra:SRR1638769'
+    ChIP__WT_NC14L-input__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638770'
+            - 'sra:SRR1638771'
+    ChIP__mei-41_NC13-pSer5__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638772'
+            - 'sra:SRR1638773'
+    ChIP__mei-41_NC13-IgG__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638774'
+            - 'sra:SRR1638775'
+    ChIP__zld_NC13-pSer5__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638776'
+            - 'sra:SRR1638777'
+    ChIP__zld_NC13-input__Embryo__BlytheWieschaus2015:
+        rep1:
+            - 'sra:SRR1638780'
+            - 'sra:SRR1638781'
+    ChIP__2-3h_wt_Zld__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779547'
+        rep2:
+            - 'sra:SRR1779551'
+    ChIP__2-3h_wt_Zld_input__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779548'
+        rep2:
+            - 'sra:SRR1779552'
+    ChIP__2-3h_gd7_Zld__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779549'
+        rep2:
+            - 'sra:SRR1779553'
+    ChIP__2-3h_gd7_Zld_input__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779550'
+        rep2:
+            - 'sra:SRR1779554'
+    ChIP__2-3h_wt_Dl__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779555'
+        rep2:
+            - 'sra:SRR1779559'
+    ChIP__2-3h_wt_Dl_input__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779556'
+        rep2:
+            - 'sra:SRR1779560'
+    ChIP__2-3h_zld_Dl__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779557'
+        rep2:
+            - 'sra:SRR1779561'
+    ChIP__2-3h_zld_Dl_input__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779558'
+        rep2:
+            - 'sra:SRR1779562'
+    ChIP__2-3h_wt_Pol_II__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779563'
+        rep2:
+            - 'sra:SRR1779567'
+    ChIP__2-3h_wt_Pol_II_input__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779564'
+        rep2:
+            - 'sra:SRR1779568'
+    ChIP__2-3h_zld_Pol_II__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779565'
+        rep2:
+            - 'sra:SRR1779569'
+    ChIP__2-3h_zld_Pol_II_input__Embryo__SunRushlow2015:
+        rep1:
+            - 'sra:SRR1779566'
+        rep2:
+            - 'sra:SRR1779570'
+    ChIP__Pita__Embryo__ZolotarevGeorgiev2016:
+        rep1:
+            - 'sra:SRR3109310'
+    ChIP__ZIPIC__Embryo__ZolotarevGeorgiev2016:
+        rep1:
+            - 'sra:SRR3109311'
+    ChIP__Zw5__Embryo__ZolotarevGeorgiev2016:
+        rep1:
+            - 'sra:SRR3109312'
+    ChIP__input_DNA__Embryo__ZolotarevGeorgiev2016:
+        rep1:
+            - 'sra:SRR3109313'
+    ChIP__wt_Bcd_E1-3__Embryo__XuSmall2014:
+        rep1:
+            - 'sra:SRR1174367'
+        rep2:
+            - 'sra:SRR1174368'
+    ChIP__wt_input__Embryo__XuSmall2014:
+        rep1:
+            - 'sra:SRR1174369'
+        rep2:
+            - 'sra:SRR1174370'
+    ChIP__zld_Bcd_E1-3__Embryo__XuSmall2014:
+        rep1:
+            - 'sra:SRR1174371'
+        rep2:
+            - 'sra:SRR1174372'
+    ChIP__zld_input__Embryo__XuSmall2014:
+        rep1:
+            - 'sra:SRR1174373'
+        rep2:
+            - 'sra:SRR1174374'
+    ChIP__Pcl_E0-8__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR063867'
+        rep2:
+            - 'sra:SRR063868'
+        rep3:
+            - 'sra:SRR063869'
+    ChIP__Pcl_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR063870'
+    ChIP__CBP_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR063887'
+    ChIP__CBP_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR063888'
+    ChIP__Trl_E0-8h__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR071262'
+        rep2:
+            - 'sra:SRR071263'
+    ChIP__Trl_E0-8h_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR071264'
+        rep2:
+            - 'sra:SRR071265'
+    ChIP__Su_var_3-9_E0-12h__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR080716'
+        rep2:
+            - 'sra:SRR080717'
+    ChIP__Su_var_3-9_E0-12h_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR080718'
+    ChIP__SuH__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR390251'
+        rep2:
+            - 'sra:SRR390252'
+    ChIP__SuH_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR390253'
+    ChIP__TCF_E0-8__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR392916'
+        rep2:
+            - 'sra:SRR392917'
+    ChIP__TCF_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR392918'
+    ChIP__SuHw__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR392922'
+        rep2:
+            - 'sra:SRR392923'
+    ChIP__SuHw_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR392924'
+    ChIP__Dfd_E0-8__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR392925'
+        rep2:
+            - 'sra:SRR392926'
+    ChIP__Ubx_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR392958'
+    ChIP__Dfd_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR392927'
+    ChIP__H3K4Me3_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030269'
+    ChIP__H3K27Ac_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030295'
+    ChIP__H3K9Ac_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030296'
+    ChIP__H3K4Me1_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030297'
+    ChIP__H3K27Me3_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030360'
+    ChIP__H3K9Me3_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030369'
+    ChIP__CBP_E0-4__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030375'
+    ChIP__E0-4_INPUT__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR030270'
+    ChIP__HDAC-492_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034693'
+        rep2:
+            - 'sra:SRR034694'
+    ChIP__HDAC-493_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034696'
+        rep2:
+            - 'sra:SRR034697'
+    ChIP__HDAC-494_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034698'
+        rep2:
+            - 'sra:SRR034699'
+    ChIP__HDAC-495_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034700'
+        rep2:
+            - 'sra:SRR034701'
+    ChIP__HDAC-496_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034702'
+        rep2:
+            - 'sra:SRR034703'
+    ChIP__HDAC-497_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034704'
+        rep2:
+            - 'sra:SRR034705'
+    ChIP__HDAC-498_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034706'
+        rep2:
+            - 'sra:SRR034707'
+    ChIP__HDAC-499_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034708'
+        rep2:
+            - 'sra:SRR034709'
+    ChIP__HDAC-500_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034710'
+        rep2:
+            - 'sra:SRR034711'
+    ChIP__HDAC-501_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034712'
+        rep2:
+            - 'sra:SRR034713'
+    ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034695'
+    ChIP__7T_cad_E0-4h__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034714'
+        rep2:
+            - 'sra:SRR034715'
+    ChIP__7T_cad_INPUT_E0-4h__Embryo__NegreWhite2011:
+        rep1:
+            - 'sra:SRR034716'
+        rep2:
+            - 'sra:SRR034717'
+    
+
+treat_vs_control_pairs:
+    - ['ChIP__ZLD_cycle_8__Embryo__HarrisonEisen2011', 'ChIP__cycle_8_input__Embryo__LiEisen2014']
+    - ['ChIP__ZLD_cycle_13__Embryo__HarrisonEisen2011', 'ChIP__cycle_12_input__Embryo__LiEisen2014']
+    - ['ChIP__ZLD_cycle_14__Embryo__HarrisonEisen2011', 'ChIP__cycle_14a_input__Embryo__LiEisen2014']
+    - ['ChIP__H3K27ac_cycle_8__Embryo__LiEisen2014', 'ChIP__H3_cycle_8__Embryo__LiEisen2014']
+    - ['ChIP__H3K27ac_cycle_8__Embryo__LiEisen2014', 'ChIP__H3_cycle_8__Embryo__LiEisen2014']
+    - ['ChIP__H3K27ac_cycle_12__Embryo__LiEisen2014', 'ChIP__H3_cycle_12__Embryo__LiEisen2014']
+    - ['ChIP__H3K27ac_cycle_14a__Embryo__LiEisen2014', 'ChIP__H3_cycle_14a__Embryo__LiEisen2014']
+    - ['ChIP__H3K27ac_cycle_14c__Embryo__LiEisen2014', 'ChIP__H3_cycle_14c__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me1_cycle_8__Embryo__LiEisen2014', 'ChIP__H3_cycle_8__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me1_cycle_12__Embryo__LiEisen2014', 'ChIP__H3_cycle_12__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me1_cycle_14a__Embryo__LiEisen2014', 'ChIP__H3_cycle_14a__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me1_cycle_14c__Embryo__LiEisen2014', 'ChIP__H3_cycle_14c__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me3_cycle_8__Embryo__LiEisen2014', 'ChIP__H3_cycle_8__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me3_cycle_12__Embryo__LiEisen2014', 'ChIP__H3_cycle_12__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me3_cycle_14a__Embryo__LiEisen2014', 'ChIP__H3_cycle_14a__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me3_cycle_14c__Embryo__LiEisen2014', 'ChIP__H3_cycle_14c__Embryo__LiEisen2014']
+    - ['ChIP__H3K9ac_cycle_8__Embryo__LiEisen2014', 'ChIP__H3_cycle_8__Embryo__LiEisen2014']
+    - ['ChIP__H3K9ac_cycle_12__Embryo__LiEisen2014', 'ChIP__H3_cycle_12__Embryo__LiEisen2014']
+    - ['ChIP__H3K9ac_cycle_14a__Embryo__LiEisen2014', 'ChIP__H3_cycle_14a__Embryo__LiEisen2014']
+    - ['ChIP__H3K9ac_cycle_14c__Embryo__LiEisen2014', 'ChIP__H3_cycle_14c__Embryo__LiEisen2014']
+    - ['ChIP__H3K27me3_cycle_12__Embryo__LiEisen2014', 'ChIP__H3_cycle_12__Embryo__LiEisen2014']
+    - ['ChIP__H3K27me3_cycle_14a__Embryo__LiEisen2014', 'ChIP__H3_cycle_14a__Embryo__LiEisen2014']
+    - ['ChIP__H3K27me3_cycle_14c__Embryo__LiEisen2014', 'ChIP__H3_cycle_14c__Embryo__LiEisen2014']
+    - ['ChIP__H3K36me3_cycle_12__Embryo__LiEisen2014', 'ChIP__H3_cycle_12__Embryo__LiEisen2014']
+    - ['ChIP__H3K36me3_cycle_14a__Embryo__LiEisen2014', 'ChIP__H3_cycle_14a__Embryo__LiEisen2014']
+    - ['ChIP__H3K36me3_cycle_14c__Embryo__LiEisen2014', 'ChIP__H3_cycle_14c__Embryo__LiEisen2014']
+    - ['ChIP__Zelda_WT__Embryo__LiEisen2014', 'ChIP__cycle_14c_input__Embryo__LiEisen2014']
+    - ['ChIP__Zelda_dZld__Embryo__LiEisen2014', 'ChIP__cycle_14c_input__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me1_WT__Embryo__LiEisen2014', 'ChIP__H3_WT__Embryo__LiEisen2014']
+    - ['ChIP__H3K4me1_dZld__Embryo__LiEisen2014', 'ChIP__H3_dZld__Embryo__LiEisen2014']
+    - ['ChIP__WT_NC12-pSer5__Embryo__BlytheWieschaus2015', 'ChIP__WT_NC12-input__Embryo__BlytheWieschaus2015']
+    - ['ChIP__WT_NC13-pSer5__Embryo__BlytheWieschaus2015', 'ChIP__WT_NC13-input__Embryo__BlytheWieschaus2015']
+    - ['ChIP__WT_NC14E-pSer5__Embryo__BlytheWieschaus2015', 'ChIP__WT_NC14E-input__Embryo__BlytheWieschaus2015']
+    - ['ChIP__WT_NC14M-pSer5__Embryo__BlytheWieschaus2015', 'ChIP__WT_NC14M-input__Embryo__BlytheWieschaus2015']
+    - ['ChIP__WT_NC14L-pSer5__Embryo__BlytheWieschaus2015', 'ChIP__WT_NC14L-input__Embryo__BlytheWieschaus2015']
+    - ['ChIP__mei-41_NC13-pSer5__Embryo__BlytheWieschaus2015', 'ChIP__mei-41_NC13-IgG__Embryo__BlytheWieschaus2015']
+    - ['ChIP__zld_NC13-pSer5__Embryo__BlytheWieschaus2015', 'ChIP__zld_NC13-input__Embryo__BlytheWieschaus2015']
+    - ['ChIP__2-3h_wt_Zld__Embryo__SunRushlow2015', 'ChIP__2-3h_wt_Zld_input__Embryo__SunRushlow2015']
+    - ['ChIP__2-3h_gd7_Zld__Embryo__SunRushlow2015', 'ChIP__2-3h_gd7_Zld_input__Embryo__SunRushlow2015']
+    - ['ChIP__2-3h_wt_Dl__Embryo__SunRushlow2015', 'ChIP__2-3h_wt_Dl_input__Embryo__SunRushlow2015']
+    - ['ChIP__2-3h_zld_Dl__Embryo__SunRushlow2015', 'ChIP__2-3h_zld_Dl_input__Embryo__SunRushlow2015']
+    - ['ChIP__2-3h_wt_Pol_II__Embryo__SunRushlow2015', 'ChIP__2-3h_wt_Pol_II_input__Embryo__SunRushlow2015']
+    - ['ChIP__2-3h_zld_Pol_II__Embryo__SunRushlow2015', 'ChIP__2-3h_zld_Pol_II_input__Embryo__SunRushlow2015']
+    - ['ChIP__Pita__Embryo__ZolotarevGeorgiev2016', 'ChIP__input_DNA__Embryo__ZolotarevGeorgiev2016']
+    - ['ChIP__ZIPIC__Embryo__ZolotarevGeorgiev2016', 'ChIP__input_DNA__Embryo__ZolotarevGeorgiev2016']
+    - ['ChIP__Zw5__Embryo__ZolotarevGeorgiev2016', 'ChIP__input_DNA__Embryo__ZolotarevGeorgiev2016']
+    - ['ChIP__wt_Bcd_E1-3__Embryo__XuSmall2014', 'ChIP__wt_input__Embryo__XuSmall2014']
+    - ['ChIP__zld_Bcd_E1-3__Embryo__XuSmall2014', 'ChIP__zld_input__Embryo__XuSmall2014']
+    - ['ChIP__Pcl_E0-8__Embryo__NegreWhite2011', 'ChIP__Pcl_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__Trl_E0-8h__Embryo__NegreWhite2011', 'ChIP__Trl_E0-8h_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__Su_var_3-9_E0-12h__Embryo__NegreWhite2011', 'ChIP__Su_var_3-9_E0-12h_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__SuH__Embryo__NegreWhite2011', 'ChIP__SuH_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__TCF_E0-8__Embryo__NegreWhite2011', 'ChIP__TCF_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__SuHw__Embryo__NegreWhite2011', 'ChIP__SuHw_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__Dfd_E0-8__Embryo__NegreWhite2011', 'ChIP__Dfd_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__Ubx_E0-12__Embryo__NegreWhite2011', 'ChIP__Dfd_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__H3K4Me3_E0-4__Embryo__NegreWhite2011', 'ChIP__E0-4_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__H3K27Ac_E0-4__Embryo__NegreWhite2011', 'ChIP__E0-4_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__H3K9Ac_E0-4__Embryo__NegreWhite2011', 'ChIP__E0-4_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__H3K4Me1_E0-4__Embryo__NegreWhite2011', 'ChIP__E0-4_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__H3K27Me3_E0-4__Embryo__NegreWhite2011', 'ChIP__E0-4_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__H3K9Me3_E0-4__Embryo__NegreWhite2011', 'ChIP__E0-4_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__CBP_E0-4__Embryo__NegreWhite2011', 'ChIP__E0-4_INPUT__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-492_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-493_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-494_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-495_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-496_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-497_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-498_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-499_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-500_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__HDAC-501_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
+    - ['ChIP__7T_cad_E0-4h__Embryo__NegreWhite2011', '7T_cad_INPUT_E0-4h_rep1__Embryo__NegreWhite2011, 7T_cad_INPUT_E0-4h_rep2__Embryo__NegreWhite2011']
+
+
+
+genome:
+    assembly: 'dm3'
+    bwa_index_basepath: '/net/levsha/share/lab/genomes-bwa/dm3/dm3.fa.gz'
+    chrom_sizes_path: '/net/levsha/share/lab/genomes/dm3/dm3.chrom.sizes'
+    
