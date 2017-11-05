@@ -85,7 +85,7 @@ rule align_sort:
                 params.library, params.run))
             shell((
                 'bwa mem -t {threads} {params.bwa_index_basepath} '
-                '{input.fastq1} {input.fastq2} '
+                '<(seqtk trimfq {input.fastq1}) <(seqtk trimfq {input.fastq2}) '
                 '| samtools sort -@ {threads} '
                     '-T /tmp/{params.library}.{params.run} '
                     '--output-fmt BAM -o {output.raw_srt}'
@@ -98,7 +98,7 @@ rule align_sort:
                 params.library, params.run))
             shell((
                 'bwa mem -t {threads} {params.bwa_index_basepath} '
-                '{input.fastq1} '
+                '<(seqtk trimfq {input.fastq1}) '
                 '| samtools sort -@ {threads} '
                     '-T /tmp/{params.library}.{params.run} '
                     '--output-fmt BAM -o {output.raw_srt}'
@@ -156,7 +156,7 @@ rule filter_dedupe:
         tmp_filt_bam_file = '/tmp/{library}.markdup.bam'
     threads: 4
     log:
-        "filter.{library}.log"
+        "logs/filter.{library}.log"
     run:
         shell(
             'samtools view -F 1804 -q {params.mapq_thresh} -b {input.bam} -o {params.filt_bam_file}'
