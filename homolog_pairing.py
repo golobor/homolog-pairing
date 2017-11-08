@@ -15,7 +15,7 @@ import click
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 @click.command(context_settings=CONTEXT_SETTINGS)
-@click.argument('COOLER_PATH', nargs=1, type=click.Path(exists=True))
+@click.argument('COOLER_PATH', nargs=1)
 @click.option(
     '-o',
     '--output',
@@ -59,10 +59,11 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     help='use interaction frequencies normalized by iterative correction')
 @click.option(
     '--normalize-by-cis',
-    type=bool, 
-    default=True, 
+    type=click.Choice(['False', 'median', 'True',]),
+    default='False', 
     show_default=True,
-    help='divide the pairing score by the cis interaction frequency in the corresponding window')
+    help='divide the pairing score by the cis interaction frequency in the corresponding window. '
+    'If median, divide the pairing score by the median of the cis interaction frequencies.')
 @click.option(
     '--normalize-by-median',
     type=bool, 
@@ -111,12 +112,14 @@ def make_pairing_bedgraph(
         report_per_homolog,
         )
 
-    if transform == 'log2':                                                      
-        df['pairing'] = np.log2(df['pairing'])
-        df['pairing'][~np.isfinite(df['pairing'])] = np.nan
-    if transform == 'log10':                                                     
-        df['pairing'] = np.log10(df['pairing'])
-        df['pairing'][~np.isfinite(df['pairing'])] = np.nan
+    with warnings.catch_warnings():                                              
+        warnings.simplefilter("ignore")                                          
+        if transform == 'log2':                                                      
+            df['pairing'] = np.log2(df['pairing'])
+            df['pairing'].loc[~np.isfinite(df['pairing'])] = np.nan
+        if transform == 'log10':                                                     
+            df['pairing'] = np.log10(df['pairing'])
+            df['pairing'].loc[~np.isfinite(df['pairing'])] = np.nan
 
     gw_median_signal = np.nanmedian(df['pairing'])
     if normalize_by_median:                                                          
@@ -139,7 +142,10 @@ def make_pairing_bedgraph(
             percentile = ('_'+str(poisson_perc)+'th_perc') if poisson_perc else '',
             window_bp=window_bp,
             res = clr.info['bin-size'],
-            norm_by_cis = ', normalized by cis diagonal' if normalize_by_cis else '',
+            norm_by_cis = {'True':', normalized by cis diagonal',
+                           'median':', normalized by cis diagonal median',
+                           'False':'',
+                            }[normalize_by_cis],
             normalize_by_median = ', normalized by the GW-median' if normalize_by_median else '',
             ignore_diags = ', ignored {} diagonals'.format(ignore_diags) if ignore_diags else '',
             median = gw_median_signal
@@ -161,7 +167,7 @@ def get_homolog_pairing_score(
     ignore_diags = 0,
     poisson_perc = None,
     balance = True,
-    normalize_by_cis = True,
+    normalize_by_cis = 'False',
     report_per_homolog = True):
 
     pairing_dfs = []                              
@@ -202,7 +208,7 @@ def get_homolog_pairing_score(
         if poisson_perc is not None:
             trans_diag *= st.poisson.isf(poisson_perc/100, trans_diag_raw) / trans_diag_raw
 
-        if normalize_by_cis:
+        if normalize_by_cis != 'False':
             cis_hom1_mat = clr.matrix(balance=balance).fetch(
                 chrom + homolog_suffixes[0], chrom+homolog_suffixes[0]).astype(np.float)
             cis_hom2_mat = clr.matrix(balance=balance).fetch(
@@ -212,9 +218,15 @@ def get_homolog_pairing_score(
             cis_hom2_diag = _take_big_diagonal_pixel(
                 cis_hom2_mat, window, ignore_diags, agg_func=np.nansum)
 
-            with warnings.catch_warnings():                                              
-                warnings.simplefilter("ignore")                                          
-                pairing = trans_diag / ((cis_hom1_diag + cis_hom2_diag)/2)                
+            if normalize_by_cis == 'True':
+                with warnings.catch_warnings():                                              
+                    warnings.simplefilter("ignore")                                          
+                    pairing = trans_diag / ((cis_hom1_diag + cis_hom2_diag)/2)                
+            elif normalize_by_cis == 'median':
+                pairing = trans_diag / np.nanmedian((cis_hom1_diag + cis_hom2_diag)/2)                
+            else:
+                raise ValueError(
+                    'normalize_by_cis can only take string values of "True", "False" and "median"')
         else:                                                                        
             pairing = trans_diag                                                     
 
