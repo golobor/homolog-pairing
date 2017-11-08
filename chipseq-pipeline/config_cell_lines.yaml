@@ -1,4 +1,4 @@
-project_folder: 'embryos/' # either absolute or relative to the current working directory!
+project_folder: 'cell_lines/' # either absolute or relative to the current working directory!
 
 run_spp_path: '/home/golobor/programming/phantompeakqualtools/run_spp.R'
 
@@ -52,7 +52,6 @@ default_fragment_size: 100
 #         - 'sra:SRR123456?start=0&end=1000000'
 #
 fastq_paths:
-    
     ChIP__GAF__Kc167__CubenasPottsCorces2017:
         rep1:
             - 'sra:SRR3452729'
@@ -85,7 +84,6 @@ fastq_paths:
     ChIP__IgG_NT__Kc167__LiCorces2015:
         rep1:
             - 'sra:SRR1636785'
-    ChIP__IgG_NT__Kc167__LiCorces2015:
         rep2:
             - 'sra:SRR1636786'
     ChIP__BEAF_HS__Kc167__LiCorces2015:
@@ -107,7 +105,6 @@ fastq_paths:
     ChIP__CBP_HS__Kc167__LiCorces2015:
         rep1:
             - 'sra:SRR1636754'
-    ChIP__CBP_HS__Kc167__LiCorces2015:
         rep2:
             - 'sra:SRR1636755'
     ChIP__CBP_NT__Kc167__LiCorces2015:
@@ -132,7 +129,6 @@ fastq_paths:
             - 'sra:SRR1636763'
         rep2:
             - 'sra:SRR1636764'
-    ChIP__CP190_HS__Kc167__LiCorces2015:
         rep3:
             - 'sra:SRR1636765'
     ChIP__CP190_NT__Kc167__LiCorces2015:
@@ -188,7 +184,6 @@ fastq_paths:
             - 'sra:SRR1636795'
         rep2:
             - 'sra:SRR1636796'
-    ChIP__Rad21_NT__Kc167__LiCorces2015:
         rep3:
             - 'sra:SRR1636797'
     ChIP__RNAPII_flavopiridol__Kc167__LiCorces2015:
@@ -207,8 +202,9 @@ fastq_paths:
         rep1:
             - 'sra:SRR1636802'
     ChIP__TFIIIC_HS__Kc167__LiCorces2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1636803'
+        rep1_lane2:
             - 'sra:SRR1636804'
     ChIP__TFIIIC_NT__Kc167__LiCorces2015:
         rep1:
@@ -238,8 +234,10 @@ fastq_paths:
         rep2:
             - 'sra:SRR1636780'
     ChIP__H3K9me2_HS__Kc167__LiCorces2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR1636781'
+    ChIP__H3K9me2_NT__Kc167__LiCorces2015:
+        rep1_lane1:
             - 'sra:SRR1636782'
     ChIP__H3K27ac_HS__Kc167__LiCorces2015:
         rep1:
@@ -297,10 +295,9 @@ fastq_paths:
         rep1:
             - 'sra:SRR442091'
     ChIP__H3K4me3_Kc__Kc167__LiCorces2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR443910'
-    ChIP__H3K4me3_Kc__Kc167__LiCorces2015:
-        rep1:
+        rep1_lane2:
             - 'sra:SRR442089'
     ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011:
         rep1:
@@ -401,12 +398,14 @@ fastq_paths:
         rep2:
             - 'sra:SRR064987'
     ChIP__GAF__S2__FudaLis2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR567537'
+        rep1_lane2:
             - 'sra:SRR567536'
     ChIP__GAF-KD_GAF__S2__FudaLis2015:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR567539'
+        rep1_lane2:
             - 'sra:SRR567538'
     ChIP__CLAMP_control_RNAi__SL2__SorucoLarschan2013:
         rep1:
@@ -429,30 +428,37 @@ fastq_paths:
         rep2:
             - 'sra:SRR520450'
     ChIP__dCAPD3__S2Rp__KlebanowLongworth2016:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR2834291'
+        rep1_lane2:
             - 'sra:SRR2834292'
-    ChIP__dCAPD3__S2Rp__KlebanowLongworth2016:
-        rep2:
+        rep2_lane1:
             - 'sra:SRR2834298'
+        rep2_lane2:
             - 'sra:SRR2834297'
     ChIP__IgG__S2Rp__KlebanowLongworth2016:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR2834288'
+        rep1_lane2:
             - 'sra:SRR2834289'
+        rep1_lane3:
             - 'sra:SRR2834290'
-        rep2:
+        rep2_lane1:
             - 'sra:SRR2834295'
+        rep2_lane2:
             - 'sra:SRR2834296'
     ChIP__input__S2Rp__KlebanowLongworth2016:
-        rep1:
+        rep1_lane1:
             - 'sra:SRR2834285'
+        rep1_lane2:
             - 'sra:SRR2834286'
+        rep1_lane3:
             - 'sra:SRR2834287'
-        rep2:
+        rep2_lane1:
             - 'sra:SRR2834293'
+        rep2_lane2:
             - 'sra:SRR2834294'
-
+    
 treat_vs_control_pairs:
     - ['ChIP__GAF__Kc167__CubenasPottsCorces2017', 'ChIP__IgG_NT__Kc167__LiCorces2015']
     - ['ChIP__Ibf1__Kc167__CubenasPottsCorces2017', 'ChIP__IgG_NT__Kc167__LiCorces2015']
