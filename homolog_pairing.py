@@ -79,7 +79,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.option(
     '--report-per-homolog',
     type=bool,
-    default=True,
+    default=False,
     show_default=True,
     help='if True, duplicate the pairing scores for each of the homologs '
          'otherwise, report the pairing score once for each homolog pair')
