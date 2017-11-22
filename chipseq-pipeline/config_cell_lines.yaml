@@ -386,12 +386,12 @@ fastq_paths:
             - 'sra:SRR527324'
         rep2:
             - 'sra:SRR527325'
-    ChIP__M1BP__S2Rp__LiGilmour2013:
-        rep1:
-            - 'sra:SRR951914'
-    ChIP__input_pre_immune__S2Rp__LiGilmour2013:
-        rep1:
-            - 'sra:SRR951915'
+#    ChIP__M1BP__S2Rp__LiGilmour2013:
+#        rep1:
+#            - 'sra:SRR951914'
+#    ChIP__input_pre_immune__S2Rp__LiGilmour2013:
+#        rep1:
+#            - 'sra:SRR951915'
     ChIP__Pol_II_rpb3__S2__CoreLis2012:
         rep1:
             - 'sra:SRR064986'
@@ -458,7 +458,60 @@ fastq_paths:
             - 'sra:SRR2834293'
         rep2_lane2:
             - 'sra:SRR2834294'
-    
+
+    ChIP__Ash1_siAsh1__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140277'
+    ChIP__Ash1_siMrg15__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140278'
+    ChIP__Ash1_WT__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140275'
+        rep2:
+            - 'sra:SRR5140276'
+    ChIP__H3K27me3_WT__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019822'
+    ChIP__H3K27me3_siAsh1__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019823'
+    ChIP__H3K27me3_siMrg15__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019824'
+    ChIP__H3K36me2_WT__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019825'
+    ChIP__H3K36me2_siAsh1__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019826'
+    ChIP__H3K36me2_siMrg15__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019827'
+    ChIP__IgG_WT__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140283'
+    ChIP__input_WT__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140284'
+    ChIP__input_siAsh1__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019820'
+    ChIP__input_siMrg15__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR6019821'
+    ChIP__Mrg15_siAsh1__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140281'
+    ChIP__Mrg15_siMrg15__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140282'
+    ChIP__Mrg15_WT__SL2__HuangZhu2017:
+        rep1:
+            - 'sra:SRR5140279'
+        rep2:
+            - 'sra:SRR5140280'
+            
 treat_vs_control_pairs:
     - ['ChIP__GAF__Kc167__CubenasPottsCorces2017', 'ChIP__IgG_NT__Kc167__LiCorces2015']
     - ['ChIP__Ibf1__Kc167__CubenasPottsCorces2017', 'ChIP__IgG_NT__Kc167__LiCorces2015']
@@ -506,22 +559,25 @@ treat_vs_control_pairs:
     - ['ChIP__H3K9me2_HS__Kc167__LiCorces2015', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
     - ['ChIP__H3K9me2_NT__Kc167__LiCorces2015', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
     - ['ChIP__H3K27ac_HS__Kc167__LiCorces2015', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
-    - ['ChIP__dTFIIIC220__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__Cohesin_Rad21__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__Condensin_I_Barren_Interphase__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__Condensin_I_Barren_Asynchronous__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__Condensin_II_CAPH2_Interphase__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__Condensin_I_CAPH2_async__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__Chromator__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__GAF__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__CP190__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__dTFIIIC220_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__input_dCTCF_RNAi__Kc167__LiCorces2015']
-    - ['ChIP__Cohesin_Rad21_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__input_dCTCF_RNAi__Kc167__LiCorces2015']
-    - ['ChIP__Condensin_II_CAPH2_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__input_dCTCF_RNAi__Kc167__LiCorces2015']
-    - ['ChIP__CP190_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__input_dCTCF_RNAi__Kc167__LiCorces2015']
-    - ['ChIP__H3K4me1_Kc__Kc167__LiCorces2015', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
-    - ['ChIP__H3K27ac_Kc__Kc167__LiCorces2015', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
-    - ['ChIP__H3K4me3_Kc__Kc167__LiCorces2015', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
+
+    - ['ChIP__dTFIIIC220__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Cohesin_Rad21__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Condensin_I_Barren_Interphase__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Condensin_I_Barren_Asynchronous__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Condensin_II_CAPH2_Interphase__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Condensin_I_CAPH2_async__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Chromator__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__GAF__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__CP190__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__dTFIIIC220_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Cohesin_Rad21_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Condensin_II_CAPH2_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__CP190_dCTCF_RNAi__Kc167__LiCorces2015', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+
+    - ['ChIP__H3K4me1_Kc__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
+    - ['ChIP__H3K27ac_Kc__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
+    - ['ChIP__H3K4me3_Kc__Kc167__LiCorces2015', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
+
     - ['ChIP__CP190_20HE_0hrs__Kc167__WoodCorces2011', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
     - ['ChIP__CP190_20HE_3hrs__Kc167__WoodCorces2011', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
     - ['ChIP__CP190_20HE_48hrs__Kc167__WoodCorces2011', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
@@ -536,9 +592,9 @@ treat_vs_control_pairs:
     - ['ChIP__BEAF-32_20HE_48hrs__Kc167__WoodCorces2011', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
     - ['ChIP__H3K27me3__Kc167__VanBortleCorces2012', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
     - ['ChIP__H3K27me3_CTCF_kd__Kc167__VanBortleCorces2012', 'ChIP__Histone3__Kc167__CubenasPottsCorces2017']
-    - ['ChIP__Mod_mdg4_2_2__Kc167__VanBortleCorces2012', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__Mod_mdg4_BTB__Kc167__VanBortleCorces2012', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__L_3_mbt__Kc167__VanBortleCorces2012', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
+    - ['ChIP__Mod_mdg4_2_2__Kc167__VanBortleCorces2012', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__Mod_mdg4_BTB__Kc167__VanBortleCorces2012', 'ChIP__IgG_NT__Kc167__LiCorces2015']
+    - ['ChIP__L_3_mbt__Kc167__VanBortleCorces2012', 'ChIP__IgG_NT__Kc167__LiCorces2015']
     - ['ChIP__CP190_interphase__Kc167__YangCorces2013', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
     - ['ChIP__CP190_mitosis__Kc167__YangCorces2013', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
     - ['ChIP__dCTCF_interphase__Kc167__YangCorces2013', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
@@ -548,14 +604,37 @@ treat_vs_control_pairs:
     - ['ChIP__SuHw_mitosis__Kc167__YangCorces2013', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
     - ['ChIP__DREF_TOTAL__Kc167__YangCorces2013', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
     - ['ChIP__DREF_Mitosis__Kc167__YangCorces2013', 'ChIP__Input_20HE_0hrs__Kc167__WoodCorces2011']
-    - ['ChIP__M1BP__S2Rp__LiGilmour2013', 'ChIP__input_pre_immune__S2Rp__LiGilmour2013']
-    - ['ChIP__Pol_II_rpb3__S2__CoreLis2012', 'ChIP__input_pre_immune__S2Rp__LiGilmour2013']
-    - ['ChIP__GAF__S2__FudaLis2015', 'ChIP__input_pre_immune__S2Rp__LiGilmour2013']
-    - ['ChIP__GAF-KD_GAF__S2__FudaLis2015', 'ChIP__input_pre_immune__S2Rp__LiGilmour2013']
+#    - ['ChIP__M1BP__S2Rp__LiGilmour2013', 'ChIP__input__S2Rp__KlebanowLongworth2016']
+    - ['ChIP__Pol_II_rpb3__S2__CoreLis2012', 'ChIP__input_control_RNAi__SL2__SorucoLarschan2013']
+    - ['ChIP__GAF__S2__FudaLis2015', 'ChIP__input_control_RNAi__SL2__SorucoLarschan2013']
+    - ['ChIP__GAF-KD_GAF__S2__FudaLis2015', 'ChIP__input_control_RNAi__SL2__SorucoLarschan2013']
     - ['ChIP__CLAMP_control_RNAi__SL2__SorucoLarschan2013', 'ChIP__input_control_RNAi__SL2__SorucoLarschan2013']
     - ['ChIP__CLAMP_MSL2_RNAi__SL2__SorucoLarschan2013', 'ChIP__input_MSL2_RNAi__SL2__SorucoLarschan2013']
     - ['ChIP__dCAPD3__S2Rp__KlebanowLongworth2016', 'ChIP__IgG__S2Rp__KlebanowLongworth2016']
     - ['ChIP__dCAPD3__S2Rp__KlebanowLongworth2016', 'ChIP__input__S2Rp__KlebanowLongworth2016']
+ 
+
+    - ['ChIP__Ash1_WT__SL2__HuangZhu2017', 'ChIP__input_WT__SL2__HuangZhu2017']
+    - ['ChIP__Ash1_WT__SL2__HuangZhu2017', 'ChIP__IgG_WT__SL2__HuangZhu2017']
+    - ['ChIP__Ash1_siAsh1__SL2__HuangZhu2017', 'ChIP__input_siAsh1__SL2__HuangZhu2017']
+    - ['ChIP__Ash1_siMrg15__SL2__HuangZhu2017', 'ChIP__input_siMrg15__SL2__HuangZhu2017']
+
+    - ['ChIP__H3K27me3_WT__SL2__HuangZhu2017', 'ChIP__input_WT__SL2__HuangZhu2017']
+    - ['ChIP__H3K27me3_WT__SL2__HuangZhu2017', 'ChIP__IgG_WT__SL2__HuangZhu2017']
+    - ['ChIP__H3K27me3_siAsh1__SL2__HuangZhu2017', 'ChIP__input_siAsh1__SL2__HuangZhu2017']
+    - ['ChIP__H3K27me3_siMrg15__SL2__HuangZhu2017', 'ChIP__Mrg15_siMrg15__SL2__HuangZhu2017']
+
+    - ['ChIP__H3K36me2_WT__SL2__HuangZhu2017', 'ChIP__input_WT__SL2__HuangZhu2017']
+    - ['ChIP__H3K36me2_WT__SL2__HuangZhu2017', 'ChIP__IgG_WT__SL2__HuangZhu2017']
+    - ['ChIP__H3K36me2_siAsh1__SL2__HuangZhu2017', 'ChIP__input_siAsh1__SL2__HuangZhu2017']
+    - ['ChIP__H3K36me2_siMrg15__SL2__HuangZhu2017', 'ChIP__input_siMrg15__SL2__HuangZhu2017']
+
+    - ['ChIP__Mrg15_WT__SL2__HuangZhu2017', 'ChIP__input_WT__SL2__HuangZhu2017']
+    - ['ChIP__Mrg15_WT__SL2__HuangZhu2017', 'ChIP__IgG_WT__SL2__HuangZhu2017']
+    - ['ChIP__Mrg15_siAsh1__SL2__HuangZhu2017', 'ChIP__input_siAsh1__SL2__HuangZhu2017']
+    - ['ChIP__Mrg15_siMrg15__SL2__HuangZhu2017', 'ChIP__input_siMrg15__SL2__HuangZhu2017']
+
+
 
 genome:
     assembly: 'dm3'

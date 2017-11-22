@@ -490,7 +490,51 @@ fastq_paths:
             - 'sra:SRR034716'
         rep2:
             - 'sra:SRR034717'
+    ChIP__CLAMP_nc10__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa27-1_R1.fastq.gz
+    ChIP__CLAMP_nc11__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa28-1_R1.fastq.gz
+    ChIP__CLAMP_nc12__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa29-1_R1.fastq.gz
+        rep2:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa30-1_R1.fastq.gz
+    ChIP__CLAMP_nc13__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa30-5_R1.fastq.gz
+        rep2:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa29-5_R1.fastq.gz
+    ChIP__CLAMP_nc14__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa28-5_R1.fastq.gz
+        rep2:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/KUa27-5_R1.fastq.gz
     
+
+    ChIP__CLAMP_nc10_input__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa27-4_R1.fastq.gz
+
+    ChIP__CLAMP_nc11_input__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa28-4_R1.fastq.gz
+    ChIP__CLAMP_nc12_input__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa29-4_R1.fastq.gz
+        rep2:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa30-4_R1.fastq.gz
+    ChIP__CLAMP_nc13_input__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa29-8_R1.fastq.gz
+        rep2:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa30-8_R1.fastq.gz
+    ChIP__CLAMP_nc14_input__Embryo__Reider2017:
+        rep1:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa28-8_R1.fastq.gz
+        rep2:
+            - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa27-8_R1.fastq.gz
 
 treat_vs_control_pairs:
     - ['ChIP__ZLD_cycle_8__Embryo__HarrisonEisen2011', 'ChIP__cycle_8_input__Embryo__LiEisen2014']
@@ -567,6 +611,12 @@ treat_vs_control_pairs:
     - ['ChIP__HDAC-500_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
     - ['ChIP__HDAC-501_E0-12__Embryo__NegreWhite2011', 'ChIP__HDAC-INPUT_E0-12__Embryo__NegreWhite2011']
     - ['ChIP__7T_cad_E0-4h__Embryo__NegreWhite2011', 'ChIP__7T_cad_INPUT_E0-4h__Embryo__NegreWhite2011']
+
+    - ['ChIP__CLAMP_nc10__Embryo__Reider2017', 'ChIP__CLAMP_nc10_input__Embryo__Reider2017']
+    - ['ChIP__CLAMP_nc11__Embryo__Reider2017', 'ChIP__CLAMP_nc11_input__Embryo__Reider2017']
+    - ['ChIP__CLAMP_nc12__Embryo__Reider2017', 'ChIP__CLAMP_nc12_input__Embryo__Reider2017']
+    - ['ChIP__CLAMP_nc13__Embryo__Reider2017', 'ChIP__CLAMP_nc13_input__Embryo__Reider2017']
+    - ['ChIP__CLAMP_nc14__Embryo__Reider2017', 'ChIP__CLAMP_nc14_input__Embryo__Reider2017']
 
 
 
