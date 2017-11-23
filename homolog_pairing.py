@@ -84,6 +84,12 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     help='if True, duplicate the pairing scores for each of the homologs '
          'otherwise, report the pairing score once for each homolog pair')
 
+@click.option(
+    '--agg-func',
+    type=click.Choice(['nansum', 'nanmean', 'nanmedian']),
+    show_default=True,
+    help='the function to calculate score over diagonal pixels')
+
 def make_pairing_bedgraph(
     cooler_path,
     output,
@@ -96,6 +102,7 @@ def make_pairing_bedgraph(
     normalize_by_median,
     transform,
     report_per_homolog, 
+    agg_func
 ):
     """Generate a bedgraph file with a homolog pairing score.
     """
@@ -110,6 +117,7 @@ def make_pairing_bedgraph(
         balance,
         normalize_by_cis,
         report_per_homolog,
+        agg_func
         )
 
     with warnings.catch_warnings():                                              
@@ -168,7 +176,8 @@ def get_homolog_pairing_score(
     poisson_perc = None,
     balance = True,
     normalize_by_cis = 'False',
-    report_per_homolog = True):
+    report_per_homolog = True,
+    agg_func='nanmean'):
 
     pairing_dfs = []                              
 
@@ -190,18 +199,21 @@ def get_homolog_pairing_score(
 
     window = int(np.floor(window_bp / 2 / clr.info['bin-size']))
     bins = clr.bins()[:]
+    agg_func = {'nanmean':np.nanmean, 
+                'nansum':np.nansum,
+                'nanmedian':np.nanmedian}[agg_func]
     for chrom in base_chroms:                                                        
 
         if (not balance) or poisson_perc is not None:
             trans_mat_raw = clr.matrix(balance=False).fetch(
                 chrom + homolog_suffixes[0], chrom+homolog_suffixes[1]).astype(np.float)
             trans_diag_raw = _take_big_diagonal_pixel(
-                trans_mat_raw, window, ignore_diags, agg_func=np.nansum)
+                trans_mat_raw, window, ignore_diags, agg_func=agg_func)
         if balance:
             trans_mat_balanced = clr.matrix(balance=True).fetch(
                 chrom + homolog_suffixes[0], chrom+homolog_suffixes[1]).astype(np.float)
             trans_diag_balanced = _take_big_diagonal_pixel(
-                trans_mat_balanced, window, ignore_diags, agg_func=np.nansum)
+                trans_mat_balanced, window, ignore_diags, agg_func=agg_func)
            
         trans_diag = trans_diag_balanced if balance else trans_diag_raw
         
@@ -214,9 +226,9 @@ def get_homolog_pairing_score(
             cis_hom2_mat = clr.matrix(balance=balance).fetch(
                 chrom + homolog_suffixes[1], chrom+homolog_suffixes[1]).astype(np.float)
             cis_hom1_diag = _take_big_diagonal_pixel(
-                cis_hom1_mat, window, ignore_diags, agg_func=np.nansum)
+                cis_hom1_mat, window, ignore_diags, agg_func=agg_func)
             cis_hom2_diag = _take_big_diagonal_pixel(
-                cis_hom2_mat, window, ignore_diags, agg_func=np.nansum)
+                cis_hom2_mat, window, ignore_diags, agg_func=agg_func)
 
             if normalize_by_cis == 'True':
                 with warnings.catch_warnings():                                              
