@@ -511,7 +511,49 @@ fastq_paths:
             - 'sra:SRR5140279'
         rep2:
             - 'sra:SRR5140280'
-            
+
+
+    ChIP__BioTAPNScm_IP__S2__KangKuroda2015:
+        rep1:
+            - 'sra:SRR1813243'
+        rep2:
+            - 'sra:SRR1813245'
+    ChIP__BioTAPNScm_input__S2__KangKuroda2015:
+        rep1:
+            - 'sra:SRR1813244'
+        rep2:
+            - 'sra:SRR1813246'
+    ChIP__PcCBioTAP_IP__S2__KangKuroda2015:
+        rep1:
+            - 'sra:SRR1813247'
+    ChIP__PcCBioTAP_input__S2__KangKuroda2015:
+        rep1:
+            - 'sra:SRR1813248'
+    ChIP__antiPhory__larvae__RayKassiss2016:
+        rep1:
+            - 'sra:SRR3102817'
+        rep2:
+            - 'sra:SRR3102818'
+    ChIP__Pho__larvae__RayKassiss2016:
+        rep1:
+            - 'sra:SRR3102819'
+    ChIP__antiPhry__larvae__RayKassiss2016:
+        rep1:
+            - 'sra:SRR3102820'
+        rep2:
+            - 'sra:SRR3102821'
+    ChIP__antiPhry-Input__larvae__RayKassiss2016:
+        rep1:
+            - 'sra:SRR3102822'
+    ChIP__antiH3K27me3ry__larvae__RayKassiss2016:
+        rep1:
+            - 'sra:SRR3102823'
+        rep2:
+            - 'sra:SRR3102824'
+    ChIP__antiH3K27me3ry-Input__larvae__RayKassiss2016:
+        rep1:
+            - 'sra:SRR3102825'
+               
 treat_vs_control_pairs:
     - ['ChIP__GAF__Kc167__CubenasPottsCorces2017', 'ChIP__IgG_NT__Kc167__LiCorces2015']
     - ['ChIP__Ibf1__Kc167__CubenasPottsCorces2017', 'ChIP__IgG_NT__Kc167__LiCorces2015']
@@ -634,6 +676,11 @@ treat_vs_control_pairs:
     - ['ChIP__Mrg15_siAsh1__SL2__HuangZhu2017', 'ChIP__input_siAsh1__SL2__HuangZhu2017']
     - ['ChIP__Mrg15_siMrg15__SL2__HuangZhu2017', 'ChIP__input_siMrg15__SL2__HuangZhu2017']
 
+    - ['ChIP__BioTAPNScm_IP__S2__KangKuroda2015', 'ChIP__BioTAPNScm_input__S2__KangKuroda2015'] 
+    - ['ChIP__PcCBioTAP_IP__S2__KangKuroda2015', 'ChIP__PcCBioTAP_input__S2__KangKuroda2015']   
+    - ['ChIP__antiPhory__larvae__RayKassiss2016', 'ChIP__Pho__larvae__RayKassiss2016']  
+    - ['ChIP__antiPhry__larvae__RayKassiss2016', 'ChIP__antiPhry-Input__larvae__RayKassiss2016']      
+    - ['ChIP__antiH3K27me3ry__larvae__RayKassiss2016', 'ChIP__antiH3K27me3ry-Input__larvae__RayKassiss2016']  
 
 
 genome:
