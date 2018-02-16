@@ -536,6 +536,17 @@ fastq_paths:
         rep2:
             - /net/levsha/share/lab/DrosophilaWulab/fastq/earlyembryofastq/inputs/KUa27-8_R1.fastq.gz
 
+    ChIP__Mef2__Embryo__BonnFurlong2012:
+        rep1:
+            - 'sra:ERR031145'
+        rep2:
+            - 'sra:ERR031146'
+    ChIP__input__Embryo__BonnFurlong2012:
+        rep1:
+            - 'sra:ERR031126'
+        rep2:
+            - 'sra:ERR031127'
+    
 treat_vs_control_pairs:
     - ['ChIP__ZLD_cycle_8__Embryo__HarrisonEisen2011', 'ChIP__cycle_8_input__Embryo__LiEisen2014']
     - ['ChIP__ZLD_cycle_13__Embryo__HarrisonEisen2011', 'ChIP__cycle_12_input__Embryo__LiEisen2014']
@@ -617,6 +628,8 @@ treat_vs_control_pairs:
     - ['ChIP__CLAMP_nc12__Embryo__Reider2017', 'ChIP__CLAMP_nc12_input__Embryo__Reider2017']
     - ['ChIP__CLAMP_nc13__Embryo__Reider2017', 'ChIP__CLAMP_nc13_input__Embryo__Reider2017']
     - ['ChIP__CLAMP_nc14__Embryo__Reider2017', 'ChIP__CLAMP_nc14_input__Embryo__Reider2017']
+
+    - ['ChIP__Mef2__Embryo__BonnFurlong2012', 'ChIP__input__Embryo__BonnFurlong2012']
 
 
 
