@@ -35,7 +35,6 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     default = ('_057', '_439'),    
     show_default=True,
     help='suffixes used to distinguish the pair of homolog chromosomes')
-
 @click.option(
     '--ignore-diags',
     type=int, 
@@ -82,13 +81,18 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     default=False,
     show_default=True,
     help='if True, duplicate the pairing scores for each of the homologs '
-         'otherwise, report the pairing score once for each homolog pair')
-
+         'otherwise, report the pairing score once for each homolog pair'
+    )
 @click.option(
     '--agg-func',
     type=click.Choice(['nansum', 'nanmean', 'nanmedian']),
     show_default=True,
     help='the function to calculate score over diagonal pixels')
+@click.option(
+    '--as-bedgraph',
+    is_flag=True,
+    show_default=True,
+    help='output a bedgraph with the pairing score instead of a full table')
 
 def make_pairing_bedgraph(
     cooler_path,
@@ -102,7 +106,8 @@ def make_pairing_bedgraph(
     normalize_by_median,
     transform,
     report_per_homolog, 
-    agg_func
+    agg_func,
+    as_bedgraph
 ):
     """Generate a bedgraph file with a homolog pairing score.
     """
@@ -125,24 +130,34 @@ def make_pairing_bedgraph(
         if transform == 'log2':                                                      
             df['pairing'] = np.log2(df['pairing'])
             df['pairing'].loc[~np.isfinite(df['pairing'])] = np.nan
-        if transform == 'log10':                                                     
+            df['cis_norm'] = np.log2(df['cis_norm'])
+            df['cis_norm'].loc[~np.isfinite(df['cis_norm'])] = np.nan
+        elif transform == 'log10':                                                     
             df['pairing'] = np.log10(df['pairing'])
             df['pairing'].loc[~np.isfinite(df['pairing'])] = np.nan
+            df['cis_norm'] = np.log10(df['cis_norm'])
+            df['cis_norm'].loc[~np.isfinite(df['cis_norm'])] = np.nan
 
-    gw_median_signal = np.nanmedian(df['pairing'])
+    gw_median_pairing = np.nanmedian(df['pairing'])
+    gw_median_cis_norm = np.nanmedian(df['cis_norm'])
     if normalize_by_median:                                                          
         if transform.startswith('log'): 
-            df['pairing'] -= gw_median_signal
+            df['pairing'] -= gw_median_pairing
+            df['cis_norm'] -= gw_median_cis_norm
         else:
-            df['pairing'] /= gw_median_signal
+            df['pairing'] /= gw_median_pairing
+            df['cis_norm'] /= gw_median_cis_norm
 
-    df['pairing'] = np.nan_to_num(df['pairing'])
+    if as_bedgraph:
+        df['pairing'] = np.nan_to_num(df['pairing'])
+        df['cis_norm'] = np.nan_to_num(df['cis_norm'])
     #df.rename({'pairing':'dataValue', 'start':'chromStart', 'end':'chromEnd'})
         
     bedgraph_header = (
         """track type=bedGraph
         name="{transform}pairing{percentile}"
-        description="{transform}pairing{percentile}, {window_bp}bp window at {res}bp resolution{norm_by_cis}{normalize_by_median}{ignore_diags}. Summary: median: {median}"
+        description="{transform}pairing{percentile}, {window_bp}bp window at {res}bp resolution{norm_by_cis}{normalize_by_median}{ignore_diags}. 
+        Summary: trans median: {trans_median}, cis median: {cis_median}"
         visibility=full color=0,0,0 altColor=50,50,50 graphType=points yLineMark=0 yLineOnOff=on
         group="{transform}pairing"
         """.replace('\n', ' ').format(
@@ -156,16 +171,27 @@ def make_pairing_bedgraph(
                             }[normalize_by_cis],
             normalize_by_median = ', normalized by the GW-median' if normalize_by_median else '',
             ignore_diags = ', ignored {} diagonals'.format(ignore_diags) if ignore_diags else '',
-            median = gw_median_signal
-            ) + '\n')
+            trans_median = gw_median_pairing,
+            cis_median = gw_median_cis_norm
+            )
+        + '\n')
     
-    output.write(bedgraph_header)           
 
-    df.to_csv(
-        output,
-        sep='\t',
-        header=None,
-        index=False)
+    if as_bedgraph:
+        output.write(bedgraph_header)           
+
+        df.to_csv(
+            output.iloc[:, :4],
+            sep='\t',
+            header=None,
+            index=False)
+    else:
+        output.write('#' + bedgraph_header)           
+
+        df.to_csv(
+            output,
+            sep='\t',
+            index=False)
         
                                                                                  
 def get_homolog_pairing_score(
@@ -202,9 +228,11 @@ def get_homolog_pairing_score(
     agg_func = {'nanmean':np.nanmean, 
                 'nansum':np.nansum,
                 'nanmedian':np.nanmedian}[agg_func]
-    for chrom in base_chroms:                                                        
 
-        if (not balance) or poisson_perc is not None:
+    for chrom in base_chroms:                                                        
+        trans_diag_raw = None
+        trans_diag_balanced = None
+        if (not balance) or (poisson_perc is not None):
             trans_mat_raw = clr.matrix(balance=False).fetch(
                 chrom + homolog_suffixes[0], chrom+homolog_suffixes[1]).astype(np.float)
             trans_diag_raw = _take_big_diagonal_pixel(
@@ -220,34 +248,33 @@ def get_homolog_pairing_score(
         if poisson_perc is not None:
             trans_diag *= st.poisson.isf(poisson_perc/100, trans_diag_raw) / trans_diag_raw
 
-        if normalize_by_cis != 'False':
-            cis_hom1_mat = clr.matrix(balance=balance).fetch(
-                chrom + homolog_suffixes[0], chrom+homolog_suffixes[0]).astype(np.float)
-            cis_hom2_mat = clr.matrix(balance=balance).fetch(
-                chrom + homolog_suffixes[1], chrom+homolog_suffixes[1]).astype(np.float)
-            cis_hom1_diag = _take_big_diagonal_pixel(
-                cis_hom1_mat, window, ignore_diags, agg_func=agg_func)
-            cis_hom2_diag = _take_big_diagonal_pixel(
-                cis_hom2_mat, window, ignore_diags, agg_func=agg_func)
-
-            if normalize_by_cis == 'True':
-                with warnings.catch_warnings():                                              
-                    warnings.simplefilter("ignore")                                          
-                    pairing = trans_diag / ((cis_hom1_diag + cis_hom2_diag)/2)                
-            elif normalize_by_cis == 'median':
-                pairing = trans_diag / np.nanmedian((cis_hom1_diag + cis_hom2_diag)/2)                
-            else:
-                raise ValueError(
-                    'normalize_by_cis can only take string values of "True", "False" and "median"')
-        else:                                                                        
-            pairing = trans_diag                                                     
+        cis_hom1_mat = clr.matrix(balance=balance).fetch(
+            chrom + homolog_suffixes[0], chrom+homolog_suffixes[0]).astype(np.float)
+        cis_hom2_mat = clr.matrix(balance=balance).fetch(
+            chrom + homolog_suffixes[1], chrom+homolog_suffixes[1]).astype(np.float)
+        cis_hom1_diag = _take_big_diagonal_pixel(
+            cis_hom1_mat, window, ignore_diags, agg_func=agg_func)
+        cis_hom2_diag = _take_big_diagonal_pixel(
+            cis_hom2_mat, window, ignore_diags, agg_func=agg_func)
 
         chrom_bins = bins[bins.chrom == chrom+homolog_suffixes[0]]                       
         pairing_df = pd.DataFrame(dict(binid=chrom_bins.index.values))
         pairing_df['chrom'] = chrom
         pairing_df['start'] = chrom_bins.start.values                             
         pairing_df['end'] = chrom_bins.end.values                                 
-        pairing_df['pairing'] = pairing
+        if normalize_by_cis == 'True':
+            with warnings.catch_warnings():                                              
+                warnings.simplefilter("ignore")                                          
+                pairing_df['pairing'] = trans_diag / ((cis_hom1_diag + cis_hom2_diag)/2)                
+        elif normalize_by_cis == 'median':
+            pairing_df['pairing'] = trans_diag / np.nanmedian((cis_hom1_diag + cis_hom2_diag)/2)                
+        elif normalize_by_cis == 'False':
+            pairing_df['pairing'] = trans_diag                                                     
+        else:
+            raise ValueError(
+                'normalize_by_cis can only take string values of "True", "False" and "median"')
+        pairing_df['cis_norm1'] = cis_hom1_diag
+        pairing_df['cis_norm2'] = cis_hom2_diag
 
         if report_per_homolog:
             pairing_df_1 = pairing_df.copy()
@@ -258,6 +285,8 @@ def get_homolog_pairing_score(
                 bins['chrom'] == chrom + homolog_suffixes[0]].index.values
             pairing_df_2['binid'] = bins[
                 bins['chrom'] == chrom + homolog_suffixes[1]].index.values
+            pairing_df_1['cis_norm'] = cis_hom1_diag
+            pairing_df_2['cis_norm'] = cis_hom2_diag
 
             if (np.searchsorted(bins['chrom'], chrom + homolog_suffixes[0], 'left') <
                 np.searchsorted(bins['chrom'], chrom + homolog_suffixes[1], 'left')):
