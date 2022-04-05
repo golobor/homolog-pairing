@@ -7,8 +7,8 @@ import pandas as pd
 import cooler                                                                    
                                                                                  
 import cooltools                                                                 
-import cooltools.num                                                             
-from cooltools.num import numutils                                               
+import cooltools.lib
+from cooltools.lib import numutils                                               
 
 import click
 
@@ -86,6 +86,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.option(
     '--agg-func',
     type=click.Choice(['nansum', 'nanmean', 'nanmedian']),
+    default='nanmean',
     show_default=True,
     help='the function to calculate score over diagonal pixels')
 @click.option(
@@ -208,20 +209,23 @@ def get_homolog_pairing_score(
     pairing_dfs = []                              
 
     hom_chroms = clr.chromnames                                                        
-    base_chroms = []   
-    for chrom in hom_chroms:                                                         
-        base_chrom = ''
-        
-        if chrom.endswith(homolog_suffixes[0]):                                          
-            base_chrom = chrom[:-len(homolog_suffixes[0])]
-        if chrom.endswith(homolog_suffixes[1]):                                          
-            base_chrom = chrom[:-len(homolog_suffixes[1])]
-        if (                                                                         
-            ((base_chrom+homolog_suffixes[0]) in hom_chroms)                                  
-            and ((base_chrom+homolog_suffixes[1]) in hom_chroms)                              
-            and base_chrom not in base_chroms):                                      
+    base_chroms = []
+    if homolog_suffixes == ('',''):
+        base_chroms = hom_chroms
+    else:
+        for chrom in hom_chroms:                                                         
+            base_chrom = ''
+            
+            if chrom.endswith(homolog_suffixes[0]):                                          
+                base_chrom = chrom[:-len(homolog_suffixes[0])]
+            if chrom.endswith(homolog_suffixes[1]):                                          
+                base_chrom = chrom[:-len(homolog_suffixes[1])]
+            if (                                                                         
+                ((base_chrom+homolog_suffixes[0]) in hom_chroms)                                  
+                and ((base_chrom+homolog_suffixes[1]) in hom_chroms)                              
+                and base_chrom not in base_chroms):                                      
 
-            base_chroms.append(base_chrom)                                           
+                base_chroms.append(base_chrom)                                           
 
     window = int(np.floor(window_bp / 2 / clr.info['bin-size']))
     bins = clr.bins()[:]
